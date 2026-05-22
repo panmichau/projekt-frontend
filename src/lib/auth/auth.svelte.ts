@@ -30,11 +30,9 @@ class AuthState {
 
     try {
       if (!getAccessToken()) {
-        this.user = null;
-        return;
+        await refreshToken();
       }
 
-      await refreshToken();
       this.user = await getMe();
     } catch {
       this.user = null;
@@ -62,10 +60,10 @@ class AuthState {
   async logout() {
     try {
       await apiLogout();
-    } catch {
-      // pomyśleć
+    
     } finally {
       this.user = null;
+      this.initialized = false;
       clearAccessToken();
     }
   }

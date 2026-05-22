@@ -2,9 +2,15 @@ import {
   apiFetch,
   clearAccessToken,
   scheduleTokenRefresh,
-  setAccessToken,
+  setAccessToken
 } from './api';
-import type { JwtResponse, LoginRequest, UserSummaryDTO,UserRegisterRequest } from './types';
+
+import type {
+  JwtResponse,
+  LoginRequest,
+  UserRegisterRequest,
+  UserSummaryDTO
+} from './types';
 
 function applyToken(response: JwtResponse) {
   if (!response.token || !response.expiration) {
@@ -43,8 +49,7 @@ export async function login(data: LoginRequest) {
 
 export async function refreshToken() {
   const response = await apiFetch<JwtResponse>('/auth/refresh', {
-    method: 'POST',
-    auth: true
+    method: 'POST'
   });
 
   applyToken(response);
@@ -61,8 +66,7 @@ export async function getMe() {
 export async function logout() {
   try {
     await apiFetch<void>('/auth/logout', {
-      method: 'POST',
-      auth: true
+      method: 'POST'
     });
   } finally {
     clearAccessToken();
