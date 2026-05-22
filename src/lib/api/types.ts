@@ -21,3 +21,6 @@ export type PageMetadata = components['schemas']['PageMetadata'];
 export type PagedModelUserSummaryDTO =  components['schemas']['PagedModelUserSummaryDTO'];
 
 export type UserSaveRequest = components['schemas']['UserSaveRequest'];
+
+export type PagedModelEmployeeSummaryDTO =  components['schemas']['PagedModelEmployeeSummaryDTO'];
+export type PositionDTO = components['schemas']['PositionDTO'];
