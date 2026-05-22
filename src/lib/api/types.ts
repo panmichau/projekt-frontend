@@ -18,9 +18,9 @@ export type EmployeeDTO = components['schemas']['EmployeeDTO'];
 export type EmployeeSaveRequest = components['schemas']['EmployeeSaveRequest'];
 
 export type PageMetadata = components['schemas']['PageMetadata'];
-export type PagedModelUserSummaryDTO =  components['schemas']['PagedModelUserSummaryDTO'];
+export type PagedModelUserSummaryDTO = components['schemas']['PagedModelUserSummaryDTO'];
 
 export type UserSaveRequest = components['schemas']['UserSaveRequest'];
 
-export type PagedModelEmployeeSummaryDTO =  components['schemas']['PagedModelEmployeeSummaryDTO'];
+export type PagedModelEmployeeSummaryDTO = components['schemas']['PagedModelEmployeeSummaryDTO'];
 export type PositionDTO = components['schemas']['PositionDTO'];
