@@ -3,69 +3,88 @@ import { getMe, logout as apiLogout, refreshToken } from '$lib/api/auth';
 import { clearAccessToken, getAccessToken } from '$lib/api/api';
 
 class AuthState {
-	user = $state<UserSummaryDTO | null>(null);
-	loading = $state(false);
-	initialized = $state(false);
+  user = $state<UserSummaryDTO | null>(null);
+  loading = $state(false);
+  initialized = $state(false);
 
-	get isLoggedIn() {
-		return this.user !== null;
-	}
+  private initPromise: Promise<void> | null = null;
 
-	get roles() {
-		return this.user?.roles ?? [];
-	}
+  get isLoggedIn() {
+    return this.user !== null;
+  }
 
-	hasRole(role: string) {
-		return this.roles.includes(role as never);
-	}
+  get roles() {
+    return this.user?.roles ?? [];
+  }
 
-	hasAnyRole(roles: string[]) {
-		return roles.some((role) => this.hasRole(role));
-	}
+  hasRole(role: string) {
+    return this.roles.includes(role as never);
+  }
 
-	async init() {
-		if (this.initialized) return;
+  hasAnyRole(roles: string[]) {
+    return roles.some((role) => this.hasRole(role));
+  }
 
-		this.loading = true;
+  async init() {
+    if (this.initialized) return;
 
-		try {
-			if (!getAccessToken()) {
-				await refreshToken();
-			}
+    if (this.initPromise) {
+      return this.initPromise;
+    }
 
-			this.user = await getMe();
-		} catch {
-			this.user = null;
-			clearAccessToken();
-		} finally {
-			this.loading = false;
-			this.initialized = true;
-		}
-	}
+    this.initPromise = this.runInit();
 
-	async loadUser() {
-		this.loading = true;
+    try {
+      await this.initPromise;
+    } finally {
+      this.initPromise = null;
+    }
+  }
 
-		try {
-			this.user = await getMe();
-		} catch {
-			this.user = null;
-			clearAccessToken();
-			throw new Error('Nie udało się pobrać zalogowanego użytkownika');
-		} finally {
-			this.loading = false;
-		}
-	}
+  private async runInit() {
+    this.loading = true;
 
-	async logout() {
-		try {
-			await apiLogout();
-		} finally {
-			this.user = null;
-			this.initialized = false;
-			clearAccessToken();
-		}
-	}
+    try {
+      if (!getAccessToken()) {
+        await refreshToken();
+      }
+
+      this.user = await getMe();
+    } catch (error) {
+      console.error('Auth init error:', error);
+      this.user = null;
+      clearAccessToken();
+    } finally {
+      this.loading = false;
+      this.initialized = true;
+    }
+  }
+
+  async loadUser() {
+    this.loading = true;
+
+    try {
+      this.user = await getMe();
+    } catch {
+      this.user = null;
+      clearAccessToken();
+      throw new Error('Nie udało się pobrać zalogowanego użytkownika');
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async logout() {
+    try {
+      await apiLogout();
+    } catch {
+      // ignorujemy błąd backendu przy logout
+    } finally {
+      this.user = null;
+      this.initialized = false;
+      clearAccessToken();
+    }
+  }
 }
 
 export const auth = new AuthState();
