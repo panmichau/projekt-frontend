@@ -56,7 +56,8 @@ export async function getMe() {
 export async function logout() {
 	try {
 		await apiFetch<void>('/auth/logout', {
-			method: 'POST'
+			method: 'POST',
+			auth: true
 		});
 	} finally {
 		clearAccessToken();

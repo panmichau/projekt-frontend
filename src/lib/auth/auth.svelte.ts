@@ -77,8 +77,9 @@ class AuthState {
   async logout() {
     try {
       await apiLogout();
-    } catch {
-      // ignorujemy błąd backendu przy logout
+    } catch (error) {
+      console.error("Logout failed:", error);
+    
     } finally {
       this.user = null;
       this.initialized = false;

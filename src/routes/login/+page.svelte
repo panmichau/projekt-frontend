@@ -19,7 +19,7 @@
 		try {
 			await login({ email, password });
 			await auth.loadUser();
-			await goto(resolve('/dashboard'));
+			await goto(resolve('/dashboard'), { replaceState: true });
 		} catch {
 			error = 'Nie udało się zalogować. Sprawdź email i hasło.';
 		} finally {

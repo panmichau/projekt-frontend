@@ -4,6 +4,7 @@
 
 	import { auth } from '$lib/auth/auth.svelte';
 	import { appModules } from '$lib/navigation/app-modules';
+	import { goto } from '$app/navigation';
 
 	type Props = {
 		children: import('svelte').Snippet;
@@ -66,7 +67,10 @@
 
 				<button
 					class="w-full border border-zinc-300 bg-white px-3 py-2 text-sm font-medium hover:bg-zinc-100"
-					onclick={() => auth.logout()}
+					onclick={() => {
+						auth.logout();
+						goto(resolve('/login'));
+					}}
 				>
 					Wyloguj
 				</button>
