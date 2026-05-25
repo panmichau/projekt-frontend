@@ -31,7 +31,7 @@
 	let phoneNumber = $state('');
 	let position = $state('');
 
-	let userMode = $state<EmployeeUserMode>('new');
+	let userMode = $state<EmployeeUserMode>('none');
 	let userId = $state('');
 
 	let email = $state('');
@@ -56,7 +56,7 @@
 		phoneNumber = employee?.phoneNumber ?? '';
 		position = employee?.position?.id ? String(employee.position.id) : '';
 
-		userMode = 'new';
+		userMode = employee?.user?.id ? 'new' : 'none';
 		userId = employee?.user?.id ? String(employee.user.id) : '';
 
 		email = employee?.user?.email ?? '';
@@ -86,7 +86,7 @@
 		<p class="text-sm text-zinc-600">
 			{isEdit
 				? 'Edytujesz dane pracownika oraz powiązane konto użytkownika.'
-				: 'Utwórz nowe konto użytkownika albo przypisz istniejące konto.'}
+				: 'Zapisz pracownika bez konta, utwórz nowe konto albo przypisz istniejące konto użytkownika.'}
 		</p>
 	</div>
 
@@ -154,6 +154,11 @@
 
 				<div class="flex flex-col gap-2 md:flex-row">
 					<label class="flex items-center gap-2 border border-zinc-300 px-3 py-2 text-sm">
+						<input type="radio" bind:group={userMode} value="none" />
+						<span>Bez konta</span>
+					</label>
+
+					<label class="flex items-center gap-2 border border-zinc-300 px-3 py-2 text-sm">
 						<input type="radio" bind:group={userMode} value="new" />
 						<span>Utwórz nowe konto</span>
 					</label>
@@ -166,7 +171,7 @@
 			</div>
 		{/if}
 
-		{#if !isEdit && userMode === 'existing'}
+		{#if userMode === 'existing'}
 			<label class="flex flex-col gap-1 md:col-span-2">
 				<span class="text-sm font-medium text-zinc-700">Istniejące konto</span>
 
@@ -186,11 +191,11 @@
 
 				{#if availableUsers.length === 0}
 					<span class="text-xs text-zinc-500">
-						Brak dostępnych kont z rolą NONE.
+						Brak dostępnych kont bez przypisanego pracownika.
 					</span>
 				{/if}
 			</label>
-		{:else}
+		{:else if userMode === 'new' || (isEdit && employee?.user?.id)}
 			<label class="flex flex-col gap-1">
 				<span class="text-sm font-medium text-zinc-700">Email konta użytkownika</span>
 				<input
@@ -212,6 +217,10 @@
 					required={!isEdit && userMode === 'new'}
 				/>
 			</label>
+		{:else}
+			<p class="md:col-span-2 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600">
+				Pracownik zostanie zapisany bez konta użytkownika.
+			</p>
 		{/if}
 
 		<div class="flex items-end justify-end gap-3 md:col-span-2">

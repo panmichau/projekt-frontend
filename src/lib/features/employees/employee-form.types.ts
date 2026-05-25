@@ -1,4 +1,4 @@
-export type EmployeeUserMode = 'new' | 'existing'
+export type EmployeeUserMode = 'none' |'new' | 'existing'
 
 export type EmployeeFormValue =  {
     firstName: string;

@@ -13,6 +13,19 @@ export function buildEmployeeRequest(
 	};
 
 	if (editedEmployee) {
+		if (value.userMode === 'none') {
+			return baseEmployee;
+		}
+
+		if (value.userMode === 'existing') {
+			return {
+				...baseEmployee,
+				user: {
+					id: Number(value.userId)
+				}
+			};
+		}
+		
 		const user: NonNullable<EmployeeSaveRequest['user']> = {
 			id: editedEmployee.user?.id,
 			email: value.email.trim(),
@@ -27,6 +40,9 @@ export function buildEmployeeRequest(
 			...baseEmployee,
 			user
 		};
+	}
+	if (value.userMode === 'none'){
+		return baseEmployee;
 	}
 
 	if (value.userMode === 'existing') {
