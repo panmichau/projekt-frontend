@@ -1,14 +1,28 @@
 import { PUBLIC_API_URL } from '$env/static/public';
+import { refreshToken } from './auth';
 
 let accessToken: string | null = null;
+let tokenExpiration: Date | null = null;
 let refreshTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 export function setAccessToken(token: string | null) {
 	accessToken = token;
 }
 
-export function getAccessToken() {
+export async function getAccessToken() {
+	if (tokenExpiration === null || Date.now() > tokenExpiration.getTime() - 60_000) {
+		try {
+			await refreshToken();
+		} catch {
+			clearAccessToken();
+		}
+	}
+
 	return accessToken;
+}
+
+export function setExpiration(expiration: string) {
+	tokenExpiration = new Date(expiration);
 }
 
 export function clearAccessToken() {
@@ -18,29 +32,6 @@ export function clearAccessToken() {
 		clearTimeout(refreshTimeoutId);
 		refreshTimeoutId = null;
 	}
-}
-
-export function scheduleTokenRefresh(expiration: string, refreshCallback: () => Promise<void>) {
-	if (refreshTimeoutId) {
-		clearTimeout(refreshTimeoutId);
-	}
-
-	const expirationTime = new Date(expiration).getTime();
-
-	if (Number.isNaN(expirationTime)) {
-		throw new Error('Nieprawidłowa data wygaśnięcia tokena');
-	}
-
-	const oneMinuteBeforeExpiration = expirationTime - Date.now() - 60_000;
-
-	if (oneMinuteBeforeExpiration <= 0) {
-		void refreshCallback();
-		return;
-	}
-
-	refreshTimeoutId = setTimeout(() => {
-		void refreshCallback();
-	}, oneMinuteBeforeExpiration);
 }
 
 type ApiOptions = {
@@ -69,12 +60,14 @@ export async function apiFetch<T>(path: string, options: ApiOptions = {}): Promi
 		headers['Content-Type'] = 'application/json';
 	}
 
+	const token: string | null = await getAccessToken();
+
 	if (options.auth) {
-		if (!accessToken) {
+		if (!token) {
 			throw new Error('Brak access tokena');
 		}
 
-		headers.Authorization = `Bearer ${accessToken}`;
+		headers.Authorization = `Bearer ${token}`;
 	}
 
 	const response = await fetch(url, {
