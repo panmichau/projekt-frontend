@@ -8,6 +8,7 @@ export type UserRegisterRequest = components['schemas']['UserRegisterRequest'];
 export type ClientSummaryDTO = components['schemas']['ClientSummaryDTO'];
 export type ClientDTO = components['schemas']['ClientDTO'];
 export type ClientSaveRequest = components['schemas']['ClientSaveRequest'];
+export type PagedModelClientSummaryDTO = components['schemas']['PagedModelClientSummaryDTO'];
 
 export type CourseSummaryDTO = components['schemas']['CourseSummaryDTO'];
 export type CourseDTO = components['schemas']['CourseDTO'];
