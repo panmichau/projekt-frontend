@@ -8,6 +8,7 @@
 		autocomplete?: HTMLInputAttributes['autocomplete'];
 		required?: boolean;
 		placeholder?: string;
+		error?: string;
 	};
 
 	let {
@@ -16,7 +17,8 @@
 		value = $bindable(),
 		autocomplete,
 		required = false,
-		placeholder
+		placeholder,
+		error
 	}: Props = $props();
 </script>
 
@@ -33,4 +35,8 @@
 		{required}
 		{placeholder}
 	/>
+
+	{#if error}
+		<span class="mb-1 block text-sm text-red-800">{error}</span>
+	{/if}
 </label>
