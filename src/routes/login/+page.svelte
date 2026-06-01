@@ -7,25 +7,45 @@
 	import TextInput from '$lib/components/ui/TextInput.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 
-	let email = $state('');
-	let password = $state('');
+	import { createForm } from 'svelte-forms-lib';
+	import * as yup from 'yup';
+
+	yup.setLocale({
+		mixed: {
+			default: 'Nieprawidłowa wartość',
+			required: 'To pole nie może być puste'
+		}
+	});
+
+	const schema = yup.object({
+		email: yup.string().required(),
+		password: yup.string().required()
+	});
+
+	const { form, errors, handleSubmit } = createForm({
+		initialValues: { email: '', password: '' },
+		validationSchema: schema,
+		onSubmit: async (values) => {
+			error = null;
+			loading = true;
+
+			try {
+				const email = values.email;
+				const password = values.password;
+
+				await login({ email, password });
+				await auth.loadUser();
+				await goto(resolve('/dashboard'), { replaceState: true });
+			} catch {
+				error = 'Nie udało się zalogować. Sprawdź email i hasło.';
+			} finally {
+				loading = false;
+			}
+		}
+	});
+
 	let error = $state<string | null>(null);
 	let loading = $state(false);
-
-	async function handleSubmit() {
-		error = null;
-		loading = true;
-
-		try {
-			await login({ email, password });
-			await auth.loadUser();
-			await goto(resolve('/dashboard'), { replaceState: true });
-		} catch {
-			error = 'Nie udało się zalogować. Sprawdź email i hasło.';
-		} finally {
-			loading = false;
-		}
-	}
 </script>
 
 <svelte:head>
@@ -39,21 +59,23 @@
 			<p class="mt-1 text-sm text-zinc-600">Zaloguj się, aby przejść do panelu.</p>
 		</div>
 
-		<form
-			class="space-y-5"
-			onsubmit={(event) => {
-				event.preventDefault();
-				void handleSubmit();
-			}}
-		>
-			<TextInput label="Email" type="email" bind:value={email} autocomplete="email" required />
+		<form class="space-y-5" onsubmit={handleSubmit} novalidate>
+			<TextInput
+				label="Email"
+				type="email"
+				bind:value={$form.email}
+				autocomplete="email"
+				required
+				error={$errors.email}
+			/>
 
 			<TextInput
 				label="Hasło"
 				type="password"
-				bind:value={password}
+				bind:value={$form.password}
 				autocomplete="current-password"
 				required
+				error={$errors.password}
 			/>
 
 			{#if error}

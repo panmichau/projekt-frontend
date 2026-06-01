@@ -7,31 +7,55 @@
 	import TextInput from '$lib/components/ui/TextInput.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 
-	let email = $state('');
-	let password = $state('');
-	let repeatedPassword = $state('');
+	import { createForm } from 'svelte-forms-lib';
+	import * as yup from 'yup';
+
+	yup.setLocale({
+		mixed: {
+			default: 'Nieprawidłowa wartość',
+			required: 'To pole nie może być puste'
+		},
+		string: {
+			email: 'Nieprawidłowy email'
+		}
+	});
+
+	const schema = yup.object({
+		email: yup.string().email().required(),
+		password: yup
+			.string()
+			.min(8, 'Hasło musi mieć co najmniej 8 znaków')
+			.max(255, 'Hasło może mieć maksymalnie 255 znaków')
+			.required(),
+		repeatedPassword: yup
+			.string()
+			.oneOf([yup.ref('password')], 'Hasła nie są takie same')
+			.required()
+	});
+
+	const { form, errors, handleSubmit } = createForm({
+		initialValues: { email: '', password: '', repeatedPassword: '' },
+		validationSchema: schema,
+		onSubmit: async (values) => {
+			error = null;
+			loading = true;
+
+			try {
+				const email = values.email;
+				const password = values.password;
+
+				await register({ email, password });
+				await goto(resolve('/login'));
+			} catch {
+				error = 'Nie udało się utworzyć konta.';
+			} finally {
+				loading = false;
+			}
+		}
+	});
+
 	let error = $state<string | null>(null);
 	let loading = $state(false);
-
-	async function handleSubmit() {
-		error = null;
-
-		if (password !== repeatedPassword) {
-			error = 'Hasła nie są takie same.';
-			return;
-		}
-
-		loading = true;
-
-		try {
-			await register({ email, password });
-			await goto(resolve('/login'));
-		} catch {
-			error = 'Nie udało się utworzyć konta.';
-		} finally {
-			loading = false;
-		}
-	}
 </script>
 
 <svelte:head>
@@ -46,19 +70,21 @@
 			<p class="mt-1 text-sm text-zinc-600">Utwórz konto użytkownika.</p>
 		</div>
 
-		<form
-			class="space-y-5"
-			onsubmit={(event) => {
-				event.preventDefault();
-				void handleSubmit();
-			}}
-		>
-			<TextInput label="Email" type="email" bind:value={email} autocomplete="email" required />
+		<form class="space-y-5" onsubmit={handleSubmit} novalidate>
+			<TextInput
+				label="Email"
+				type="email"
+				bind:value={$form.email}
+				error={$errors.email}
+				autocomplete="email"
+				required
+			/>
 
 			<TextInput
 				label="Hasło"
 				type="password"
-				bind:value={password}
+				bind:value={$form.password}
+				error={$errors.password}
 				autocomplete="new-password"
 				required
 			/>
@@ -66,7 +92,8 @@
 			<TextInput
 				label="Powtórz hasło"
 				type="password"
-				bind:value={repeatedPassword}
+				bind:value={$form.repeatedPassword}
+				error={$errors.repeatedPassword}
 				autocomplete="new-password"
 				required
 			/>
