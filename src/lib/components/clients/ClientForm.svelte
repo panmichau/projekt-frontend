@@ -32,6 +32,7 @@
 		nip: yup
 			.string()
 			.required()
+			.matches(/^\d{10}$/, 'NIP musi składać się z 10 cyfr')
 			.min(10, 'NIP musi mieć 10 znaków')
 			.max(10, 'NIP musi mieć 10 znaków'),
 		phoneNumber: yup.string().required().max(12, 'Numer telefonu może mieć maksymalnie 12 znaków'),
