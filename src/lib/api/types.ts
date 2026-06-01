@@ -25,3 +25,8 @@ export type UserSaveRequest = components['schemas']['UserSaveRequest'];
 
 export type PagedModelEmployeeSummaryDTO = components['schemas']['PagedModelEmployeeSummaryDTO'];
 export type PositionDTO = components['schemas']['PositionDTO'];
+
+export type ContractSummaryDTO = components['schemas']['ContractSummaryDTO'];
+export type ContractDTO = components['schemas']['ContractDTO'];
+export type ContractSaveRequest = components['schemas']['ContractSaveRequest'];
+export type PagedModelContractSummaryDTO =components['schemas']['PagedModelContractSummaryDTO'];
