@@ -5,6 +5,10 @@
 		EmployeeFormValue,
 		EmployeeUserMode
 	} from '$lib/features/employees/employee-form.types';
+	import { untrack } from 'svelte';
+
+	import { createForm } from 'svelte-forms-lib';
+	import * as yup from 'yup';
 
 	type Props = {
 		employee?: EmployeeDTO | null;
@@ -26,55 +30,99 @@
 		onCancel
 	}: Props = $props();
 
-	let firstName = $state('');
-	let lastName = $state('');
-	let phoneNumber = $state('');
-	let position = $state('');
-
-	let userMode = $state<EmployeeUserMode>('none');
-	let userId = $state('');
-
-	let email = $state('');
-	let password = $state('');
-
-	let currentEmployeeId = $state<number | null>(null);
-
 	const isEdit = $derived(Boolean(employee?.id));
 
-	const availableUsers = $derived(
-	users.filter((user) => Boolean(user.id && user.email))
-);
-	$effect(() => {
-		const nextEmployeeId = employee?.id ?? null;
-
-		if (currentEmployeeId === nextEmployeeId) return;
-
-		currentEmployeeId = nextEmployeeId;
-
-		firstName = employee?.firstName ?? '';
-		lastName = employee?.lastName ?? '';
-		phoneNumber = employee?.phoneNumber ?? '';
-		position = employee?.position?.id ? String(employee.position.id) : '';
-
-		userMode = employee?.user?.id ? 'new' : 'none';
-		userId = employee?.user?.id ? String(employee.user.id) : '';
-
-		email = employee?.user?.email ?? '';
-		password = '';
+	yup.setLocale({
+		mixed: {
+			default: 'Nieprawidłowa wartość',
+			required: 'To pole nie może być puste'
+		},
+		string: {
+			email: 'Nieprawidłowy email'
+		}
 	});
 
-	async function submit() {
-		await onSubmit({
-			firstName,
-			lastName,
-			phoneNumber,
-			position,
-			userMode,
-			userId,
-			email,
-			password
-		});
-	}
+	const schema = yup.object({
+		firstName: yup.string().required().max(50, 'Imię może mieć maksymalnie 50 znaków'),
+		lastName: yup.string().required().max(50, 'Nazwisko może mieć maksymalnie 50 znaków'),
+		phoneNumber: yup.string().required().max(12, 'Numer telefonu może mieć maksymalnie 12 znaków'),
+		position: yup.string().required(),
+
+		userMode: yup.mixed().required(),
+		userId: yup.string().when('userMode', {
+			is: 'existing',
+			then: (schema) => schema.required(),
+			otherwise: (schema) => schema.notRequired()
+		}),
+		email: yup
+			.string()
+			.email()
+			.max(255, 'Email może mieć maksymalnie 255 znaków')
+			.when('userMode', {
+				is: 'new',
+				then: (schema) => schema.required(),
+				otherwise: (schema) => schema.notRequired()
+			}),
+		password: yup
+			.string()
+			.max(255, 'Hasło może mieć maksymalnie 255 znaków')
+			.test(
+				'conditional-password-length',
+				'Hasło musi mieć przynajmniej 8 znaków',
+				function (value) {
+					const userMode = this.parent.userMode;
+
+					if (userMode === 'new' && !isEdit) return value !== undefined && value.trim().length >= 8;
+					return true;
+				}
+			)
+			.test('conditional-password', 'To pole jest nie może być puste', function (value) {
+				const userMode = this.parent.userMode;
+
+				if (userMode === 'new' && !isEdit) return value !== undefined && value.trim() !== '';
+				return true;
+			})
+	});
+
+	const { form, errors, handleSubmit } = createForm({
+		initialValues: {
+			firstName: untrack(() => employee?.firstName ?? ''),
+			lastName: untrack(() => employee?.lastName ?? ''),
+			phoneNumber: untrack(() => employee?.phoneNumber ?? ''),
+			position: untrack(() => (employee?.position?.id ? String(employee.position.id) : '')),
+
+			userMode: untrack(() => (employee?.user?.id ? 'new' : 'existing')),
+			userId: untrack(() => (employee?.user?.id ? String(employee.user.id) : '')),
+			email: untrack(() => employee?.user?.email ?? ''),
+			password: ''
+		},
+		validationSchema: schema,
+		onSubmit: async (values) => {
+			const firstName = values.firstName;
+			const lastName = values.lastName;
+			const phoneNumber = values.phoneNumber;
+			const position = values.position;
+			const userMode = values.userMode as EmployeeUserMode;
+			const userId = values.userId;
+			const email = values.email;
+			const password = values.password;
+
+			console.log(userId);
+
+			await onSubmit({
+				firstName,
+				lastName,
+				phoneNumber,
+				position,
+				userMode,
+				userId,
+				email,
+				password
+			});
+		}
+	});
+
+	const availableUsers = $derived(users.filter((user) => Boolean(user.id && user.email)));
 </script>
 
 <section class="mb-6 border border-zinc-300 bg-white p-5">
@@ -96,44 +144,47 @@
 		</p>
 	{/if}
 
-	<form
-		class="grid gap-4 md:grid-cols-2"
-		onsubmit={(event) => {
-			event.preventDefault();
-			submit();
-		}}
-	>
+	<form class="grid gap-4 md:grid-cols-2" onsubmit={handleSubmit} novalidate>
 		<label class="flex flex-col gap-1">
 			<span class="text-sm font-medium text-zinc-700">Imię</span>
 			<input
 				class="h-10 border border-zinc-300 px-3 text-sm outline-none focus:border-black"
-				bind:value={firstName}
+				bind:value={$form.firstName}
 				required
 			/>
+			{#if $errors.firstName}
+				<span class="text-sm text-red-800">{$errors.firstName}</span>
+			{/if}
 		</label>
 
 		<label class="flex flex-col gap-1">
 			<span class="text-sm font-medium text-zinc-700">Nazwisko</span>
 			<input
 				class="h-10 border border-zinc-300 px-3 text-sm outline-none focus:border-black"
-				bind:value={lastName}
+				bind:value={$form.lastName}
 				required
 			/>
+			{#if $errors.lastName}
+				<span class="text-sm text-red-800">{$errors.lastName}</span>
+			{/if}
 		</label>
 
 		<label class="flex flex-col gap-1">
 			<span class="text-sm font-medium text-zinc-700">Telefon</span>
 			<input
 				class="h-10 border border-zinc-300 px-3 text-sm outline-none focus:border-black"
-				bind:value={phoneNumber}
+				bind:value={$form.phoneNumber}
 			/>
+			{#if $errors.phoneNumber}
+				<span class="text-sm text-red-800">{$errors.phoneNumber}</span>
+			{/if}
 		</label>
 
 		<label class="flex flex-col gap-1">
 			<span class="text-sm font-medium text-zinc-700">Stanowisko</span>
 			<select
 				class="h-10 border border-zinc-300 bg-white px-3 text-sm outline-none focus:border-black"
-				bind:value={position}
+				bind:value={$form.position}
 				required
 			>
 				<option value="">Wybierz stanowisko</option>
@@ -146,6 +197,9 @@
 					{/if}
 				{/each}
 			</select>
+			{#if $errors.position}
+				<span class="text-sm text-red-800">{$errors.position}</span>
+			{/if}
 		</label>
 
 		{#if !isEdit}
@@ -154,30 +208,30 @@
 
 				<div class="flex flex-col gap-2 md:flex-row">
 					<label class="flex items-center gap-2 border border-zinc-300 px-3 py-2 text-sm">
-						<input type="radio" bind:group={userMode} value="none" />
+						<input type="radio" bind:group={$form.userMode} value="none" />
 						<span>Bez konta</span>
 					</label>
 
 					<label class="flex items-center gap-2 border border-zinc-300 px-3 py-2 text-sm">
-						<input type="radio" bind:group={userMode} value="new" />
+						<input type="radio" bind:group={$form.userMode} value="new" />
 						<span>Utwórz nowe konto</span>
 					</label>
 
 					<label class="flex items-center gap-2 border border-zinc-300 px-3 py-2 text-sm">
-						<input type="radio" bind:group={userMode} value="existing" />
+						<input type="radio" bind:group={$form.userMode} value="existing" />
 						<span>Wybierz istniejące konto</span>
 					</label>
 				</div>
 			</div>
 		{/if}
 
-		{#if userMode === 'existing'}
+		{#if ($form.userMode === 'existing' && !isEdit) || (isEdit && !employee?.user?.id)}
 			<label class="flex flex-col gap-1 md:col-span-2">
 				<span class="text-sm font-medium text-zinc-700">Istniejące konto</span>
 
 				<select
 					class="h-10 border border-zinc-300 bg-white px-3 text-sm outline-none focus:border-black"
-					bind:value={userId}
+					bind:value={$form.userId}
 					required
 				>
 					<option value="">Wybierz konto użytkownika</option>
@@ -194,16 +248,23 @@
 						Brak dostępnych kont bez przypisanego pracownika.
 					</span>
 				{/if}
+
+				{#if $errors.userId}
+					<span class="text-sm text-red-800">{$errors.userId}</span>
+				{/if}
 			</label>
-		{:else if userMode === 'new' || (isEdit && employee?.user?.id)}
+		{:else if $form.userMode === 'new' || (isEdit && employee?.user?.id)}
 			<label class="flex flex-col gap-1">
 				<span class="text-sm font-medium text-zinc-700">Email konta użytkownika</span>
 				<input
 					class="h-10 border border-zinc-300 px-3 text-sm outline-none focus:border-black"
 					type="email"
-					bind:value={email}
+					bind:value={$form.email}
 					required
 				/>
+				{#if $errors.email}
+					<span class="text-sm text-red-800">{$errors.email}</span>
+				{/if}
 			</label>
 
 			<label class="flex flex-col gap-1">
@@ -213,12 +274,15 @@
 				<input
 					class="h-10 border border-zinc-300 px-3 text-sm outline-none focus:border-black"
 					type="password"
-					bind:value={password}
-					required={!isEdit && userMode === 'new'}
+					bind:value={$form.password}
+					required={!isEdit && $form.userMode === 'new'}
 				/>
+				{#if $errors.password}
+					<span class="text-sm text-red-800">{$errors.password}</span>
+				{/if}
 			</label>
 		{:else}
-			<p class="md:col-span-2 border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600">
+			<p class="border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600 md:col-span-2">
 				Pracownik zostanie zapisany bez konta użytkownika.
 			</p>
 		{/if}
