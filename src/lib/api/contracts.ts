@@ -6,7 +6,7 @@ import type {
 	PagedModelContractSummaryDTO
 } from './types';
 
-export async function getContracts(page = 0, size = 10, clientName = '', city = '') {
+export async function getContracts(page = 0, size = 10, clientName = '') {
 	return apiFetch<PagedModelContractSummaryDTO>('/contract/list', {
 		method: 'GET',
 		auth: true,
@@ -14,7 +14,6 @@ export async function getContracts(page = 0, size = 10, clientName = '', city = 
 			page,
 			size,
 			clientName: clientName || undefined,
-			city: city || undefined
 		}
 	});
 }

@@ -22,6 +22,7 @@ export class ContractsState {
 	contracts = $state<ContractSummaryDTO[]>([]);
 	clients = $state<ClientSummaryDTO[]>([]);
 	page = $state<PageMetadata | null>(null);
+	clientName = $state('');
 
 	loading = $state(false);
 	saving = $state(false);
@@ -38,7 +39,7 @@ export class ContractsState {
 		this.error = null;
 
 		try {
-			const response = await getContracts(pageNumber, 10);
+			const response = await getContracts(pageNumber, 10, this.clientName);
 
 			this.contracts = response.content ?? [];
 			this.page = response.page ?? null;
@@ -152,4 +153,14 @@ export class ContractsState {
 			this.deleting = false;
 		}
 	}
+	async search() {
+	await this.loadContracts(0);
+}
+
+	async clearFilters() {
+	this.clientName = '';
+
+	await this.loadContracts(0);
+}
+
 }

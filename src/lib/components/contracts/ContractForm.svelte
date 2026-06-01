@@ -120,7 +120,7 @@
                     <option value="">Wybierz klienta</option>
                     {#each clients as client (client.id)}
                         {#if client.id}
-                            <option value={String(client.id)}>{client.name}{client.nip ? ` — ${client.nip}` : ''}</option>
+                            <option value={String(client.id)}>{client.name}{client.nip ? ` - ${client.nip}` : ''}</option>
                         {/if}
                     {/each}
                 </select>

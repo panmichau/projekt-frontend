@@ -16,6 +16,7 @@
 			<tr>
 				<th class="border-b border-zinc-300 px-4 py-3">ID</th>
 				<th class="border-b border-zinc-300 px-4 py-3">Nazwa</th>
+                <th class="border-b border-zinc-300 px-4 py-3">Klient</th>
 				<th class="border-b border-zinc-300 px-4 py-3 text-right">Akcje</th>
 			</tr>
 		</thead>
@@ -25,7 +26,7 @@
 				<tr class="border-b border-zinc-200">
 					<td class="px-4 py-3">{contract.id}</td>
 					<td class="px-4 py-3">{contract.name}</td>
-
+                    <td class="px-4 py-3">{contract.clientName ?? '—'}</td>
 					<td class="px-4 py-3">
 						<div class="flex justify-end gap-2">
 							<button

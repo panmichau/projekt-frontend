@@ -10,6 +10,7 @@
 
 	import ContractForm from '$lib/components/contracts/ContractForm.svelte';
 	import ContractTable from '$lib/components/contracts/ContractTable.svelte';
+    import ContractFilters from '$lib/components/contracts/ContractFilters.svelte';
 
 	const state = new ContractsState();
 
@@ -34,6 +35,12 @@
 			Dodaj kontrakt
 		</button>
 	</div>
+
+   <ContractFilters
+	bind:clientName={state.clientName}
+	onSearch={() => state.search()}
+	onClear={() => state.clearFilters()}
+/>
 
 	<p class="mb-4 text-sm text-zinc-600">
 		Liczba kontraktów: {state.contracts.length}
