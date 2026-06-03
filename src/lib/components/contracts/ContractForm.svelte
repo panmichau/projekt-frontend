@@ -9,6 +9,7 @@
     	import FormSection from '$lib/components/form/FormSection.svelte';
 	import FormError from '$lib/components/form/FormError.svelte';
 	import FormActions from '$lib/components/form/FormActions.svelte';
+    import SelectField from '$lib/components/form/SelectField.svelte';
 
     type Props = {
         contract?: ContractDTO | null;
@@ -101,6 +102,14 @@
             ]
         }
     ];
+    const clientOptions = $derived(
+	clients
+		.filter((client) => client.id)
+		.map((client) => ({
+			value: String(client.id),
+			label: `${client.name}${client.nip ? ` - ${client.nip}` : ''}`
+		}))
+);
 </script>
 
 <FormSection
@@ -113,30 +122,15 @@
 		<div class="grid gap-4 md:grid-cols-2">
 			<InputField label="Nazwa" bind:value={$form.name} error={$errors.name} required />
 
-			<label class="flex flex-col gap-1">
-				<span class="text-sm font-medium text-zinc-700">Klient</span>
-
-				<select
-					class="h-10 border border-zinc-300 px-3 text-sm outline-none focus:border-black"
-					bind:value={$form.clientId}
-					required
-				>
-					<option value="">Wybierz klienta</option>
-
-					{#each clients as client (client.id)}
-						{#if client.id}
-							<option value={String(client.id)}>
-								{client.name}{client.nip ? ` - ${client.nip}` : ''}
-							</option>
-						{/if}
-					{/each}
-				</select>
-
-				{#if $errors.clientId}
-					<span class="text-sm text-red-800">{$errors.clientId}</span>
-				{/if}
-			</label>
-		</div>
+            <SelectField
+	        label="Klient"
+	        bind:value={$form.clientId}
+	        error={$errors.clientId}
+	        options={clientOptions}
+	        placeholder="Wybierz klienta"
+	        required
+            />
+        </div>
 
 		{#each addressSections as section (section.title)}
 			<section class="border border-zinc-200 p-4">
