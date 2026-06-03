@@ -4,6 +4,11 @@
 
 	import { untrack } from 'svelte';
 
+	import FormSection from '$lib/components/form/FormSection.svelte';
+	import FormError from '$lib/components/form/FormError.svelte';
+	import FormActions from '$lib/components/form/FormActions.svelte';
+	import InputField from '../ui/InputField.svelte';
+
 	import { createForm } from 'svelte-forms-lib';
 	import * as yup from 'yup';
 
@@ -63,95 +68,52 @@
 	});
 </script>
 
-<section class="mb-6 border border-zinc-300 bg-white p-5">
-	<div class="mb-4 border-b border-zinc-200 pb-4">
-		<h2 class="text-base font-semibold text-black">
-			{client?.id ? 'Edycja klienta' : 'Nowy klient'}
-		</h2>
-
-		<p class="text-sm text-zinc-600">
-			{client?.id ? 'Edytujesz dane klienta.' : 'Dodaj nowego klienta do systemu.'}
-		</p>
-	</div>
-
-	{#if error}
-		<p class="mb-4 border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-			{error}
-		</p>
-	{/if}
+<FormSection
+	title={client?.id ? 'Edycja klienta' : 'Nowy klient'}
+	description={client?.id ? 'Edytujesz dane klienta.' : 'Dodaj nowego klienta do systemu.'}
+>
+	<FormError {error} />
 
 	<form class="space-y-4" onsubmit={handleSubmit} novalidate>
 		<div class="grid gap-4 md:grid-cols-2">
-			<label class="space-y-1">
-				<span class="text-sm font-medium text-zinc-700">Nazwa</span>
-				<input
-					class="w-full border border-zinc-300 px-3 py-2 text-sm"
-					bind:value={$form.name}
-					maxlength="100"
-					required
-				/>
-				{#if $errors.name}
-					<span class="text-sm text-red-800">{$errors.name}</span>
-				{/if}
-			</label>
+			<InputField
+				label="Nazwa"
+				bind:value={$form.name}
+				error={$errors.name}
+				maxlength={100}
+				required
+			/>
 
-			<label class="space-y-1">
-				<span class="text-sm font-medium text-zinc-700">NIP</span>
-				<input
-					class="w-full border border-zinc-300 px-3 py-2 text-sm"
-					bind:value={$form.nip}
-					maxlength="10"
-					required
-				/>
-				{#if $errors.nip}
-					<span class="text-sm text-red-800">{$errors.nip}</span>
-				{/if}
-			</label>
+			<InputField
+				label="NIP"
+				bind:value={$form.nip}
+				error={$errors.nip}
+				maxlength={10}
+				required
+			/>
 
-			<label class="space-y-1">
-				<span class="text-sm font-medium text-zinc-700">Telefon</span>
-				<input
-					class="w-full border border-zinc-300 px-3 py-2 text-sm"
-					bind:value={$form.phoneNumber}
-					maxlength="12"
-					required
-				/>
-				{#if $errors.phoneNumber}
-					<span class="text-sm text-red-800">{$errors.phoneNumber}</span>
-				{/if}
-			</label>
+			<InputField
+				label="Telefon"
+				bind:value={$form.phoneNumber}
+				error={$errors.phoneNumber}
+				maxlength={12}
+				required
+			/>
 
-			<label class="space-y-1">
-				<span class="text-sm font-medium text-zinc-700">Email (opcjonalnie)</span>
-				<input
-					class="w-full border border-zinc-300 px-3 py-2 text-sm"
-					type="email"
-					bind:value={$form.email}
-					maxlength="255"
-				/>
-				{#if $errors.email}
-					<span class="text-sm text-red-800">{$errors.email}</span>
-				{/if}
-			</label>
+			<InputField
+				label="Email (opcjonalnie)"
+				type="email"
+				bind:value={$form.email}
+				error={$errors.email}
+				maxlength={255}
+			/>
 		</div>
 
-		<div class="flex gap-2">
-			<button
-				class="border border-black bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-				type="submit"
-				disabled={saving}
-			>
-				{saving ? 'Zapisywanie...' : client?.id ? 'Zapisz zmiany' : 'Dodaj klienta'}
-			</button>
-
-			<button
-				class="border border-zinc-300 px-4 py-2 text-sm font-medium"
-				type="button"
-				onclick={onCancel}
-				disabled={saving}
-			>
-				Anuluj
-			</button>
-		</div>
+		<FormActions
+			submitLabel={client?.id ? 'Zapisz zmiany' : 'Dodaj klienta'}
+			savingLabel="Zapisywanie..."
+			{saving}
+			{onCancel}
+		/>
 	</form>
-</section>
+</FormSection>

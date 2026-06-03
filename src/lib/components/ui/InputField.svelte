@@ -5,7 +5,9 @@
         error = null,
         placeholder = '',
         required = false,
-        type = 'text'
+        type = 'text',
+        maxlength
+        
     }: {
         label: string;
         value: string;
@@ -13,6 +15,7 @@
         placeholder?: string;
         required?: boolean;
         type?: string;
+        maxlength?: number;
     } = $props();
 </script>
 
@@ -25,6 +28,7 @@
         bind:value
         {placeholder}
         {required}
+        {maxlength}
     />
 
     {#if error}
