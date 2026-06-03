@@ -6,6 +6,9 @@
     import type { ClientSummaryDTO, ContractDTO } from '$lib/api/types';
     import type { ContractFormValue } from '$lib/features/contracts/contract-form.types';
     import InputField from '../ui/InputField.svelte';
+    	import FormSection from '$lib/components/form/FormSection.svelte';
+	import FormError from '$lib/components/form/FormError.svelte';
+	import FormActions from '$lib/components/form/FormActions.svelte';
 
     type Props = {
         contract?: ContractDTO | null;
@@ -100,58 +103,64 @@
     ];
 </script>
 
-<section class="mb-6 border border-zinc-300 bg-white p-5">
-    <div class="mb-4 border-b border-zinc-200 pb-4">
-        <h2 class="text-base font-semibold text-black">{isEdit ? 'Edycja kontraktu' : 'Nowy kontrakt'}</h2>
-        <p class="text-sm text-zinc-600">{isEdit ? 'Edytujesz dane kontraktu.' : 'Dodaj nowy kontrakt przypisany do klienta.'}</p>
-    </div>
+<FormSection
+	title={isEdit ? 'Edycja kontraktu' : 'Nowy kontrakt'}
+	description={isEdit ? 'Edytujesz dane kontraktu.' : 'Dodaj nowy kontrakt przypisany do klienta.'}
+>
+	<FormError {error} />
 
-    {#if error}
-        <p class="mb-4 border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
-    {/if}
+	<form class="grid gap-4" onsubmit={handleSubmit} novalidate>
+		<div class="grid gap-4 md:grid-cols-2">
+			<InputField label="Nazwa" bind:value={$form.name} error={$errors.name} required />
 
-    <form class="grid gap-4" onsubmit={handleSubmit} novalidate>
-        <div class="grid gap-4 md:grid-cols-2">
-            <InputField label="Nazwa" bind:value={$form.name} error={$errors.name} required />
+			<label class="flex flex-col gap-1">
+				<span class="text-sm font-medium text-zinc-700">Klient</span>
 
-            <label class="flex flex-col gap-1">
-                <span class="text-sm font-medium text-zinc-700">Klient</span>
-                <select class="h-10 border border-zinc-300 px-3 text-sm outline-none focus:border-black" bind:value={$form.clientId} required>
-                    <option value="">Wybierz klienta</option>
-                    {#each clients as client (client.id)}
-                        {#if client.id}
-                            <option value={String(client.id)}>{client.name}{client.nip ? ` - ${client.nip}` : ''}</option>
-                        {/if}
-                    {/each}
-                </select>
-                {#if $errors.clientId}<span class="text-sm text-red-800">{$errors.clientId}</span>{/if}
-            </label>
-        </div>
+				<select
+					class="h-10 border border-zinc-300 px-3 text-sm outline-none focus:border-black"
+					bind:value={$form.clientId}
+					required
+				>
+					<option value="">Wybierz klienta</option>
 
-        {#each addressSections as section (section.title)}
-            <section class="border border-zinc-200 p-4">
-                <h3 class="mb-3 text-sm font-semibold text-black">{section.title}</h3>
-                <div class="grid gap-4 md:grid-cols-[2fr_1fr_1fr]">
-                    {#each section.fields as field (field.id)}
-                        <InputField 
-                            label={field.label} 
-                            bind:value={$form[field.id]} 
-                            error={$errors[field.id]} 
-                            placeholder={field.placeholder}
-                            required 
-                        />
-                    {/each}
-                </div>
-            </section>
-        {/each}
+					{#each clients as client (client.id)}
+						{#if client.id}
+							<option value={String(client.id)}>
+								{client.name}{client.nip ? ` - ${client.nip}` : ''}
+							</option>
+						{/if}
+					{/each}
+				</select>
 
-        <div class="flex gap-3">
-            <button type="submit" class="h-10 border border-black bg-black px-4 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50" disabled={saving}>
-                {saving ? 'Zapisywanie...' : isEdit ? 'Zapisz zmiany' : 'Dodaj kontrakt'}
-            </button>
-            <button type="button" class="h-10 border border-zinc-300 bg-white px-4 text-sm font-medium text-black disabled:cursor-not-allowed disabled:opacity-50" onclick={onCancel} disabled={saving}>
-                Anuluj
-            </button>
-        </div>
-    </form>
-</section>
+				{#if $errors.clientId}
+					<span class="text-sm text-red-800">{$errors.clientId}</span>
+				{/if}
+			</label>
+		</div>
+
+		{#each addressSections as section (section.title)}
+			<section class="border border-zinc-200 p-4">
+				<h3 class="mb-3 text-sm font-semibold text-black">{section.title}</h3>
+
+				<div class="grid gap-4 md:grid-cols-[2fr_1fr_1fr]">
+					{#each section.fields as field (field.id)}
+						<InputField
+							label={field.label}
+							bind:value={$form[field.id]}
+							error={$errors[field.id]}
+							placeholder={field.placeholder}
+							required
+						/>
+					{/each}
+				</div>
+			</section>
+		{/each}
+
+		<FormActions
+			submitLabel={isEdit ? 'Zapisz zmiany' : 'Dodaj kontrakt'}
+			savingLabel="Zapisywanie..."
+			{saving}
+			{onCancel}
+		/>
+	</form>
+</FormSection>
