@@ -26,7 +26,14 @@ export type UserSaveRequest = components['schemas']['UserSaveRequest'];
 export type PagedModelEmployeeSummaryDTO = components['schemas']['PagedModelEmployeeSummaryDTO'];
 export type PositionDTO = components['schemas']['PositionDTO'];
 
-export type ContractSummaryDTO = components['schemas']['ContractSummaryDTO']& {clientId?: number;	clientName?: string;};
+export type ContractSummaryDTO = components['schemas']['ContractSummaryDTO'] & {
+	clientId?: number;
+	clientName?: string;
+};
 export type ContractDTO = components['schemas']['ContractDTO'];
 export type ContractSaveRequest = components['schemas']['ContractSaveRequest'];
-export type PagedModelContractSummaryDTO =components['schemas']['PagedModelContractSummaryDTO'];
+export type PagedModelContractSummaryDTO = components['schemas']['PagedModelContractSummaryDTO'];
+
+export type CurrentWeatherDTO = components['schemas']['CurrentWeatherDTO'];
+export type WeatherData = components['schemas']['WeatherData'];
+export type Weather = components['schemas']['Weather'];
