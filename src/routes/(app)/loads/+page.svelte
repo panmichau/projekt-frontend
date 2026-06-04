@@ -45,8 +45,6 @@
 		{#key state.editedLoad?.id ?? 'new'}
 			<LoadForm
 				load={state.editedLoad}
-				contracts={state.contracts}
-				deliveryStates={state.deliveryStates}
 				saving={state.saving}
 				error={state.formError}
 				onSubmit={(val) => state.saveLoad(val)}

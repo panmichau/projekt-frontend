@@ -11,18 +11,19 @@
 	import FormActions from '$lib/components/form/FormActions.svelte';
 	import InputField from '../ui/InputField.svelte';
 	import SelectField from '$lib/components/form/SelectField.svelte';
+    import AsyncSelectField from '$lib/components/form/AsyncSelectField.svelte';
+
+    import { getContracts } from '$lib/api/contracts';
 
 	type Props = {
 		load: LoadDTO | null;
-		contracts: ContractSummaryDTO[];
-		deliveryStates: Array<{ id: number; name: string }>;
 		saving?: boolean;
 		error?: string | null;
 		onSubmit: (value: LoadFormValue) => void;
 		onCancel: () => void;
 	};
 
-	let { load, contracts, deliveryStates, saving = false, error = null, onSubmit, onCancel }: Props = $props();
+	let { load, saving = false, error = null, onSubmit, onCancel }: Props = $props();
 
 	yup.setLocale({
 		mixed: { default: 'Nieprawidłowa wartość', required: 'To pole jest wymagane' },
@@ -59,12 +60,32 @@
 		{ value: 'LARGE', label: 'Duży (LARGE)' }
 	];
 
-	const contractOptions = $derived(
-		contracts.map((c) => ({ value: String(c.id), label: c.name ?? `Kontrakt #${c.id}` }))
-	);
+	const stateOptions = [
+		{ value: 'PENDING', label: 'Oczekujący' },
+		{ value: 'IN_TRANSIT', label: 'W drodze' },
+		{ value: 'DELIVERED', label: 'Dostarczono' },
+		{ value: 'CANCELLED', label: 'Anulowano' }
+	];
 
-	const stateOptions = $derived(
-		deliveryStates.map((s) => ({ value: String(s.id), label: s.name ?? `Status #${s.id}` }))
+    async function searchContracts(search: string) {
+		if (!search) return [];
+		try {
+			const response = await getContracts(0, 10, search);
+			
+			return (response.content ?? []).map((c: ContractSummaryDTO) => ({
+				value: String(c.id),
+				label: `${c.name ?? `Kontrakt #${c.id}`} (Klient: ${c.clientName ?? '-'})`
+			}));
+		} catch (e) {
+			console.error("Błąd ładowania kontraktów", e);
+			return [];
+		}
+	}
+
+	const initialContractLabel = untrack(() =>
+		load?.contract
+			? `${load.contract.name ?? `Kontrakt #${load.contract.id}`} (Klient: ${load.contract.clientName ?? '-'})`
+			: ''
 	);
 </script>
 
@@ -84,7 +105,15 @@
 			<InputField label="Waga (kg)" type="number" bind:value={$form.weight} error={$errors.weight} required />
 			<InputField label="Wartość" type="number" bind:value={$form.worth} error={$errors.worth} required />
 			
-			<SelectField label="Kontrakt" bind:value={$form.contractId} error={$errors.contractId} options={contractOptions} required />
+            <AsyncSelectField
+				label="Kontrakt powiązany"
+				bind:value={$form.contractId}
+				error={$errors.contractId}
+				loadOptions={searchContracts}
+				initialLabel={initialContractLabel}
+				placeholder="Wpisz nazwę klienta, by wyszukać..."
+				required
+			/>
 			<SelectField label="Stan dostawy" bind:value={$form.deliveryStateId} error={$errors.deliveryStateId} options={stateOptions} required />
 		</div>
 

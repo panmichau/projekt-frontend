@@ -1,6 +1,4 @@
 import { getLoads, getLoad, createLoad, deleteLoad } from '$lib/api/loads';
-import { getContracts } from '$lib/api/contracts';
-import { apiFetch } from '$lib/api/api';
 import type { LoadSummaryDTO, LoadDTO, ContractSummaryDTO, PageMetadata } from '$lib/api/types';
 import { buildLoadRequest } from './load-request';
 import type { LoadFormValue } from './load-form.types';
@@ -35,23 +33,7 @@ export class LoadsState {
 		}
 	}
 
-	async loadFormData() {
-        try {
-            const contractsRes = await getContracts(0, 100);
-            this.contracts = contractsRes.content ?? [];
-
-            type StatesResponse = { content?: Array<{ id: number; name: string }> } 
-            | Array<{ id: number; name: string }>;
-            
-            const statesRes = await apiFetch<StatesResponse>('/delivery-state/list', { method: 'GET', auth: true });
-
-            this.deliveryStates = !Array.isArray(statesRes) && statesRes.content
-                ? statesRes.content
-                : (Array.isArray(statesRes) ? statesRes : []);
-        } catch {
-            this.formError = 'Nie udało się pobrać danych do formularza.';
-        }
-    }
+	async loadFormData() {}
 
 	startCreate() {
 		this.editedLoad = null;
