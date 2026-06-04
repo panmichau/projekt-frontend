@@ -64,7 +64,8 @@
 	{:else if state.error}
 		<ErrorMessage message={state.error} retry={() => state.loadLoads()} />
 	{:else if state.loads.length === 0}
-		<EmptyState title="Brak ładunków" description="W bazie danych nie znaleziono żadnych ładunków. Kliknij przycisk powyżej, aby dodać pierwszy."/>
+		<EmptyState title="Brak ładunków" 
+        description="W bazie danych nie znaleziono żadnych ładunków. Kliknij przycisk powyżej, aby dodać pierwszy."/>
 	{:else}
 		<LoadTable
 			loads={state.loads}
