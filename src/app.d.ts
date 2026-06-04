@@ -11,6 +11,7 @@ declare global {
 
 	interface Window {
 		toggleErrorButton?: () => void;
+		toggleEmailButton?: () => void;
 	}
 }
 
