@@ -14,13 +14,19 @@
 	const pathname = $derived(page.url.pathname);
 
 	let errorButton = $state(false);
+	let emailButton = $state(false);
 
 	function toggleErrorButton() {
 		errorButton = !errorButton;
 	}
 
+	function toggleEmailButton() {
+		emailButton = !emailButton;
+	}
+
 	onMount(() => {
 		window.toggleErrorButton = toggleErrorButton;
+		window.toggleEmailButton = toggleEmailButton;
 		return () => {
 			delete window.toggleErrorButton;
 		};
@@ -49,6 +55,16 @@
 					onclick={() => {
 						throw new Error('Test error');
 					}}>Test error</Button
+				>
+			{/if}
+			{#if emailButton}
+				<Button
+					type="button"
+					fullWidth
+					variant="primary"
+					onclick={() => {
+						if (auth.user != null) auth.user.email = 'zmieniony@email.com';
+					}}>Zmień email</Button
 				>
 			{/if}
 		</div>
