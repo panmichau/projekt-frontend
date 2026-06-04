@@ -38,7 +38,6 @@
 				<TableCell>
 					{load.contract?.name ?? 'Brak'}
 				</TableCell>
-                
 				<TableCell align="right">
                 <TableActions 
                     item={load} 
