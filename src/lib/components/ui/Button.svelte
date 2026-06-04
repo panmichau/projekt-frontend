@@ -1,7 +1,7 @@
 <script lang="ts">
-	type Props = {
-		type?: 'button' | 'submit';
-		disabled?: boolean;
+	import type { HTMLButtonAttributes } from 'svelte/elements';
+
+	type Props = HTMLButtonAttributes & {
 		fullWidth?: boolean;
 		variant?: 'primary' | 'secondary';
 		children: import('svelte').Snippet;
@@ -12,7 +12,8 @@
 		disabled = false,
 		fullWidth = false,
 		variant = 'secondary',
-		children
+		children,
+		...restProps
 	}: Props = $props();
 
 	const classes = $derived(
@@ -26,6 +27,6 @@
 	);
 </script>
 
-<button {type} {disabled} class={classes}>
+<button {type} {disabled} class={classes} {...restProps}>
 	{@render children()}
 </button>

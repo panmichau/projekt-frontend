@@ -1,15 +1,30 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { onMount } from 'svelte';
 
 	import { auth } from '$lib/auth/auth.svelte';
 	import { appModules } from '$lib/navigation/app-modules';
 	import { goto } from '$app/navigation';
 	import Weather from '../ui/Weather.svelte';
+	import Button from '../ui/Button.svelte';
 
 	const visibleModules = $derived(appModules.filter((module) => auth.hasAnyRole(module.roles)));
 
 	const pathname = $derived(page.url.pathname);
+
+	let errorButton = $state(false);
+
+	function toggleErrorButton() {
+		errorButton = !errorButton;
+	}
+
+	onMount(() => {
+		window.toggleErrorButton = toggleErrorButton;
+		return () => {
+			delete window.toggleErrorButton;
+		};
+	});
 </script>
 
 <aside class="fixed inset-y-0 left-0 hidden w-64 border-r border-zinc-300 bg-white md:block">
@@ -25,6 +40,17 @@
 			</div>
 
 			<Weather />
+
+			{#if errorButton}
+				<Button
+					type="button"
+					fullWidth
+					variant="primary"
+					onclick={() => {
+						throw new Error('Test error');
+					}}>Test error</Button
+				>
+			{/if}
 		</div>
 
 		<nav class="flex-1 space-y-1 p-3">
