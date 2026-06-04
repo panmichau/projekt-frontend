@@ -37,3 +37,9 @@ export type PagedModelContractSummaryDTO = components['schemas']['PagedModelCont
 export type CurrentWeatherDTO = components['schemas']['CurrentWeatherDTO'];
 export type WeatherData = components['schemas']['WeatherData'];
 export type Weather = components['schemas']['Weather'];
+
+export type LoadSummaryDTO = components['schemas']['LoadSummaryDTO'];
+export type LoadDTO = components['schemas']['LoadDTO'];
+export type LoadSaveRequest = components['schemas']['LoadSaveRequest'];
+export type PagedModelLoadSummaryDTO = components['schemas']['PagedModelLoadSummaryDTO'];
+export type SizeEnum = 'SMALL' | 'MEDIUM' | 'LARGE';

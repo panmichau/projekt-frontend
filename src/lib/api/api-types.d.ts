@@ -123,7 +123,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["getLoad"];
         put?: never;
         post: operations["createLoad"];
         delete: operations["deleteLoad"];
@@ -268,6 +268,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["findAllPositions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/load/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getLoads"];
         put?: never;
         post?: never;
         delete?: never;
@@ -625,6 +641,10 @@ export interface components {
         };
         PagedModelUserSummaryDTO: {
             content?: components["schemas"]["UserSummaryDTO"][];
+            page?: components["schemas"]["PageMetadata"];
+        };
+        PagedModelLoadSummaryDTO: {
+            content?: components["schemas"]["LoadSummaryDTO"][];
             page?: components["schemas"]["PageMetadata"];
         };
         EmployeeSummaryDTO: {
@@ -1289,6 +1309,28 @@ export interface operations {
             };
         };
     };
+    getLoad: {
+        parameters: {
+            query: {
+                loadId: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoadDTO"];
+                };
+            };
+        };
+    };
     createLoad: {
         parameters: {
             query?: never;
@@ -1528,6 +1570,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["PositionDTO"][];
+                };
+            };
+        };
+    };
+    getLoads: {
+        parameters: {
+            query: {
+                pageable: components["schemas"]["Pageable"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PagedModelLoadSummaryDTO"];
                 };
             };
         };
