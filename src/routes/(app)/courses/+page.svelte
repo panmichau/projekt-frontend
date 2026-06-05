@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
+	import CourseDetails from '$lib/components/courses/CourseDetails.svelte';
 	import CourseForm from '$lib/components/courses/CourseForm.svelte';
 	import CourseTable from '$lib/components/courses/CourseTable.svelte';
 	import EmptyState from '$lib/components/ui/EmptyState.svelte';
@@ -46,6 +46,9 @@
 			/>
 		{/key}
 	{/if}
+	{#if state.showDetails && state.viewedCourse}
+	<CourseDetails course={state.viewedCourse} onClose={() => state.closeDetails()} />
+	{/if}
 
 	{#if state.loading || state.deleting}
 		<div class="border border-zinc-300 bg-white p-5">
@@ -63,6 +66,7 @@
 	{:else}
 		<CourseTable
 			courses={state.courses}
+			onView={(course) => void state.startView(course)}
 			onEdit={(course) => void state.startEdit(course)}
 			onDelete={(course) => void state.removeCourse(course)}
 		/>

@@ -26,6 +26,8 @@ export class CoursesState {
 
 	showForm = $state(false);
 	editedCourse = $state<CourseDTO | null>(null);
+	showDetails = $state(false);
+	viewedCourse = $state<CourseDTO | null>(null);
 
 	async loadCourses(pageNumber = 0) {
 		this.loading = true;
@@ -73,6 +75,8 @@ export class CoursesState {
 		this.editedCourse = null;
 		this.formError = null;
 		this.showForm = false;
+		this.showDetails = false;
+		this.viewedCourse = null;
 
 		await this.loadFormData();
 
@@ -84,6 +88,8 @@ export class CoursesState {
 
 		this.formError = null;
 		this.showForm = false;
+		this.showDetails = false;
+		this.viewedCourse = null;
 
 		try {
 			this.editedCourse = await getCourse(course.id);
@@ -129,6 +135,28 @@ export class CoursesState {
 			this.saving = false;
 		}
 	}
+
+	async startView(course: CourseSummaryDTO) {
+	if (!course.id) return;
+
+	this.error = null;
+	this.formError = null;
+	this.showForm = false;
+	this.editedCourse = null;
+
+	try {
+		this.viewedCourse = await getCourse(course.id);
+		this.showDetails = true;
+	} catch (error) {
+		console.error(error);
+		this.error = 'Nie udało się pobrać szczegółów kursu.';
+	}
+}
+
+closeDetails() {
+	this.showDetails = false;
+	this.viewedCourse = null;
+}
 
 	async removeCourse(course: CourseSummaryDTO) {
 		if (!course.id) return;
