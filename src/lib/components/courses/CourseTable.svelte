@@ -1,63 +1,84 @@
 <script lang="ts">
-	import type { CourseSummaryDTO } from '$lib/api/types';
+    import type { CourseSummaryDTO } from '$lib/api/types';
 
-	import TableActions from '$lib/components/table/TableActions.svelte';
-	import TableCell from '$lib/components/table/TableCell.svelte';
-	import TableHeaderCell from '$lib/components/table/TableHeaderCell.svelte';
-	import TableWrapper from '$lib/components/table/TableWrapper.svelte';
+    import TableActions from '$lib/components/table/TableActions.svelte';
+    import TableCell from '$lib/components/table/TableCell.svelte';
+    import TableHeaderCell from '$lib/components/table/TableHeaderCell.svelte';
+    import TableWrapper from '$lib/components/table/TableWrapper.svelte';
 
-	type Props = {
-		courses: CourseSummaryDTO[];
-		onEdit: (course: CourseSummaryDTO) => void;
-		onDelete: (course: CourseSummaryDTO) => void;
-	};
+    type Props = {
+        courses: CourseSummaryDTO[];
+        onEdit: (course: CourseSummaryDTO) => void;
+        onDelete: (course: CourseSummaryDTO) => void;
+    };
 
-	let { courses, onEdit, onDelete}: Props = $props();
+    let { courses, onEdit, onDelete }: Props = $props();
 
-	function formatDate(date?: string) {
-		if (!date) return '—';
+    const EMPTY_VALUE = '-';
 
-		return new Intl.DateTimeFormat('pl-PL', {
-			dateStyle: 'short',
-			timeStyle: 'short'
-		}).format(new Date(date));
-	}
+    const dateFormatter = new Intl.DateTimeFormat('pl-PL', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+    });
+
+    function formatDate(date?: string) {
+        if (!date) return EMPTY_VALUE;
+
+        const parsedDate = new Date(date);
+        if (isNaN(parsedDate.getTime())) return EMPTY_VALUE;
+
+        return dateFormatter.format(parsedDate);
+    }
+
+    function formatDestination(destination?: string) {
+        return destination?.trim() || EMPTY_VALUE;
+    }
 </script>
 
 <TableWrapper>
-	<thead class="bg-zinc-100">
-		<tr>
-			<TableHeaderCell>ID</TableHeaderCell>
-			<TableHeaderCell>Miejsce docelowe</TableHeaderCell>
-			<TableHeaderCell>Data</TableHeaderCell>
-			<TableHeaderCell align="right">Akcje</TableHeaderCell>
-		</tr>
-	</thead>
+    <thead class="bg-zinc-100">
+        <tr>
+            <TableHeaderCell>ID</TableHeaderCell>
+            <TableHeaderCell>Miejsce docelowe</TableHeaderCell>
+            <TableHeaderCell>Termin kursu</TableHeaderCell>
+            <TableHeaderCell align="right">Akcje</TableHeaderCell>
+        </tr>
+    </thead>
 
-	<tbody>
-		{#each courses as course, index (course.id ?? index)}
-			<tr class="border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50">
-				<TableCell nowrap>
-					{course.id}
-				</TableCell>
+    <tbody>
+        {#each courses as course, index (course.id ?? index)}
+            {@const destination = formatDestination(course.destination)}
+            
+            <tr class="border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50 transition-colors">
+                <TableCell nowrap>
+                    {course.id ?? EMPTY_VALUE}
+                </TableCell>
 
-				<TableCell strong>
-					{course.destination ?? '—'}
-				</TableCell>
+                <TableCell strong>
+                    <span title={destination}>
+                        {destination}
+                    </span>
+                </TableCell>
 
-				<TableCell>
-					{formatDate(course.date)}
-				</TableCell>
+                <TableCell nowrap>
+                    {formatDate(course.date)}
+                </TableCell>
 
-				<TableCell align="right">
-					<TableActions
-						item={course}
-						canDelete={Boolean(course.id)}
-						onEdit={() => onEdit(course)}
-						onDelete={() => onDelete(course)}
-					/>
-				</TableCell>
-			</tr>
-		{/each}
+                <TableCell align="right">
+                    <TableActions
+                        item={course}
+                        canDelete={course.id !== undefined && course.id !== null}
+                        onEdit={() => onEdit(course)}
+                        onDelete={() => onDelete(course)}
+                    />
+                </TableCell>
+            </tr>
+        {:else}
+            <tr>
+                <td colspan="4" class="p-8 text-center text-sm text-zinc-400 italic">
+                    Brak kursów na liście.
+                </td>
+            </tr>
+        {/each} 
 	</tbody>
 </TableWrapper>
