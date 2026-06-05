@@ -46,3 +46,7 @@ export type SizeEnum = 'SMALL' | 'MEDIUM' | 'LARGE';
 
 export type DeliveryStatesEnum = 'PENDING' | 'ACCEPTED' | 'IN_WAREHOUSE' | 'ASSIGNED' | 'IN_TRANSIT' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'FAILED_ATTEMPT' | 'RETURNED' | 'CANCELLED';
 export type LoadUpdateRequest = components['schemas']['LoadUpdateRequest'];
+
+export type PagedModelCourseSummaryDTO = components['schemas']['PagedModelCourseSummaryDTO'];
+
+export type DriverSummaryDTO = components['schemas']['DriverSummaryDTO'];
