@@ -1,5 +1,10 @@
 <script lang="ts">
 	import type { PositionDTO } from '$lib/api/types';
+	import TableActions from '$lib/components/table/TableActions.svelte';
+	import TableCell from '$lib/components/table/TableCell.svelte';
+	import TableHeaderCell from '$lib/components/table/TableHeaderCell.svelte';
+	import TableWrapper from '$lib/components/table/TableWrapper.svelte';
+
 
 	type Props = {
 		positions: PositionDTO[];
@@ -9,56 +14,40 @@
 	let { positions, onDelete }: Props = $props();
 </script>
 
-<div class="overflow-hidden border border-zinc-300 bg-white">
-	<table class="min-w-full border-collapse">
-		<thead class="bg-zinc-100">
-			<tr>
-				<th
-					class="border-b border-zinc-300 px-4 py-3 text-left text-xs font-semibold tracking-wide text-zinc-700 uppercase"
-				>
-					ID
-				</th>
+<TableWrapper>
+	<thead class="bg-zinc-100">
+		<tr>
+			<TableHeaderCell>ID</TableHeaderCell>
+			<TableHeaderCell>Stanowisko</TableHeaderCell>
+			<TableHeaderCell align="right">Akcje</TableHeaderCell>
+		</tr>
+	</thead>
 
-				<th
-					class="border-b border-zinc-300 px-4 py-3 text-left text-xs font-semibold tracking-wide text-zinc-700 uppercase"
-				>
-					Stanowisko
-				</th>
+	<tbody>
+		{#each positions as item, index (item.id ?? index)}
+			<tr class="border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50">
+				<TableCell nowrap>
+					{item.id ?? '-'}
+				</TableCell>
 
-				<th
-					class="border-b border-zinc-300 px-4 py-3 text-right text-xs font-semibold tracking-wide text-zinc-700 uppercase"
-				>
-					Akcje
-				</th>
+				<TableCell strong>
+					{item.position ?? '-'}
+				</TableCell>
+
+				<TableCell align="right">
+					<TableActions
+						item={item}
+						canDelete={item.id !== undefined && item.id !== null}
+						onDelete={() => onDelete(item)}
+					/>
+				</TableCell>
 			</tr>
-		</thead>
-
-		<tbody>
-			{#each positions as item, index (item.id ?? index)}
-				<tr class="border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50">
-					<td class="px-4 py-3 text-sm whitespace-nowrap text-zinc-700">
-						{item.id}
-					</td>
-
-					<td class="px-4 py-3 text-sm font-medium text-black">
-						{item.position ?? '-'}
-					</td>
-
-					<td class="px-4 py-3 text-right">
-						{#if item.id}
-							<button
-								type="button"
-								onclick={() => onDelete(item)}
-								class="text-sm font-medium text-red-700 hover:text-red-900"
-							>
-								Usuń
-							</button>
-						{:else}
-							<span class="text-sm text-zinc-400">Brak ID</span>
-						{/if}
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-</div>
+		{:else}
+			<tr>
+				<td colspan="3" class="p-8 text-center text-sm italic text-zinc-400">
+					Brak stanowisk na liście.
+				</td>
+			</tr>
+		{/each}
+	</tbody>
+</TableWrapper>
