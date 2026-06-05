@@ -83,7 +83,7 @@
 
 			{#each visibleModules as module (module.href)}
 				<a
-					href={module.href}
+					href={resolve(module.href as '/')}
 					class={`block border px-3 py-2 text-sm font-medium ${
 						pathname === module.href
 							? 'border-black bg-black text-white'
