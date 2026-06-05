@@ -1,5 +1,8 @@
 <script lang="ts">
 	import type { UserSummaryDTO } from '$lib/api/types';
+	import TableCell from '$lib/components/table/TableCell.svelte';
+	import TableHeaderCell from '$lib/components/table/TableHeaderCell.svelte';
+	import TableWrapper from '$lib/components/table/TableWrapper.svelte';
 
 	type Props = {
 		users: UserSummaryDTO[];
@@ -9,73 +12,59 @@
 	let { users, onEditRoles }: Props = $props();
 </script>
 
-<div class="overflow-hidden border border-zinc-300 bg-white">
-	<table class="min-w-full border-collapse">
-		<thead class="bg-zinc-100">
-			<tr>
-				<th
-					class="border-b border-zinc-300 px-4 py-3 text-left text-xs font-semibold tracking-wide text-zinc-700 uppercase"
-				>
-					ID
-				</th>
+<TableWrapper>
+	<thead class="bg-zinc-100">
+		<tr>
+			<TableHeaderCell>ID</TableHeaderCell>
+			<TableHeaderCell>Email</TableHeaderCell>
+			<TableHeaderCell>Role</TableHeaderCell>
+			<TableHeaderCell align="right">Akcje</TableHeaderCell>
+		</tr>
+	</thead>
 
-				<th
-					class="border-b border-zinc-300 px-4 py-3 text-left text-xs font-semibold tracking-wide text-zinc-700 uppercase"
-				>
-					Email
-				</th>
+	<tbody>
+		{#each users as user, index (user.id ?? index)}
+			<tr class="border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50">
+				<TableCell nowrap>
+					{user.id ?? '-'}
+				</TableCell>
 
-				<th
-					class="border-b border-zinc-300 px-4 py-3 text-left text-xs font-semibold tracking-wide text-zinc-700 uppercase"
-				>
-					Role
-				</th>
+				<TableCell strong>
+					{user.email ?? '-'}
+				</TableCell>
 
-				<th
-					class="border-b border-zinc-300 px-4 py-3 text-right text-xs font-semibold tracking-wide text-zinc-700 uppercase"
-				>
-					Akcje
-				</th>
+				<TableCell>
+					{#if user.roles?.length}
+						<div class="flex flex-wrap gap-1.5">
+							{#each user.roles as role (role)}
+								<span
+									class="border border-zinc-300 bg-white px-2 py-0.5 text-xs font-medium text-black"
+								>
+									{role}
+								</span>
+							{/each}
+						</div>
+					{:else}
+						-
+					{/if}
+				</TableCell>
+
+				<TableCell align="right">
+					<button
+						type="button"
+						class="inline-flex h-9 items-center justify-center border border-zinc-300 bg-white px-3 text-sm font-medium text-black hover:bg-zinc-100"
+						onclick={() => onEditRoles(user)}
+					>
+						Edytuj role
+					</button>
+				</TableCell>
 			</tr>
-		</thead>
-
-		<tbody>
-			{#each users as user (user.id)}
-				<tr class="border-b border-zinc-200 last:border-b-0 hover:bg-zinc-50">
-					<td class="px-4 py-3 text-sm whitespace-nowrap text-zinc-700">
-						{user.id}
-					</td>
-
-					<td class="px-4 py-3 text-sm font-medium text-black">
-						{user.email ?? '-'}
-					</td>
-
-					<td class="px-4 py-3 text-sm text-zinc-700">
-						{#if user.roles?.length}
-							<div class="flex flex-wrap gap-1.5">
-								{#each user.roles as role (role)}
-									<span
-										class="border border-zinc-300 bg-white px-2 py-0.5 text-xs font-medium text-black"
-									>
-										{role}
-									</span>
-								{/each}
-							</div>
-						{:else}
-							-
-						{/if}
-					</td>
-
-					<td class="px-4 py-3 text-right">
-						<button
-							class="inline-flex h-9 items-center justify-center border border-zinc-300 bg-white px-3 text-sm font-medium text-black hover:bg-zinc-100"
-							onclick={() => onEditRoles(user)}
-						>
-							Edytuj role
-						</button>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-</div>
+		{:else}
+			<tr>
+				<td colspan="4" class="p-8 text-center text-sm italic text-zinc-400">
+					Brak użytkowników na liście.
+				</td>
+			</tr>
+		{/each}
+	</tbody>
+</TableWrapper>
