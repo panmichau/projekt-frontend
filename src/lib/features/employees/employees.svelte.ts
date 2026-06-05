@@ -6,7 +6,6 @@ import {
     updateEmployee
 } from '$lib/api/employees';
 import { getPositions } from '$lib/api/positions';
-import { getUsers } from '$lib/api/users';
 import type {
     EmployeeDTO,
     EmployeeSummaryDTO,
@@ -14,6 +13,7 @@ import type {
     PositionDTO,
     UserSummaryDTO
 } from '$lib/api/types';
+import { getUnassignedUsers } from '$lib/api/users';
 import { buildEmployeeRequest } from '$lib/features/employees/employee-request';
 import type { EmployeeFormValue } from '$lib/features/employees/employee-form.types';
 
@@ -21,7 +21,6 @@ export class EmployeesState {
     employees = $state<EmployeeSummaryDTO[]>([]);
     positions = $state<PositionDTO[]>([]);
     users = $state<UserSummaryDTO[]>([]);
-    assignedUserIds = $state<number[]>([]);
     page = $state<PageMetadata | null>(null);
 
     loading = $state(false);
@@ -34,12 +33,6 @@ export class EmployeesState {
     showForm = $state(false);
     editedEmployee = $state<EmployeeDTO | null>(null);
 
-    availableUsers = $derived(
-        this.users.filter((user) => {
-            if (!user.id || !user.email) return false;
-            return !this.assignedUserIds.includes(user.id);
-        })
-    );
 
     async loadEmployees(pageNumber = 0) {
         this.loading = true;
@@ -56,56 +49,45 @@ export class EmployeesState {
         }
     }
 
-    async loadAssignedUserIds() {
-        const response = await getEmployees(0, 25);
-        const employeeSummaries = response.content ?? [];
-
-        const employeeDetails = await Promise.all(
-            employeeSummaries
-                .filter((employee) => employee.id)
-                .map((employee) => getEmployee(employee.id!))
-        );
-
-        this.assignedUserIds = employeeDetails
-            .map((employee) => employee.user?.id)
-            .filter((userId): userId is number => Boolean(userId));
-    }
 
     async loadFormData() {
         try {
             const [positionsResponse, usersResponse] = await Promise.all([
                 getPositions(),
-                getUsers(0, 25)
+                getUnassignedUsers()
             ]);
 
             this.positions = positionsResponse;
-            this.users = usersResponse.content ?? [];
+            this.users = usersResponse ;
 
-            await this.loadAssignedUserIds();
         } catch {
             this.formError = 'Nie udało się pobrać danych formularza.';
         }
     }
 
-    startCreate() {
-        this.editedEmployee = null;
-        this.formError = null;
-        this.showForm = true;
-    }
+async startCreate() {
+	this.editedEmployee = null;
+	this.formError = null;
+	this.showForm = true;
 
-    async startEdit(employee: EmployeeSummaryDTO) {
-        if (!employee.id) return;
+	await this.loadFormData();
+}
 
-        this.formError = null;
+async startEdit(employee: EmployeeSummaryDTO) {
+	if (!employee.id) return;
 
-        try {
-            this.editedEmployee = await getEmployee(employee.id);
-            this.showForm = true;
-        } catch {
-            this.formError = 'Nie udało się pobrać danych pracownika.';
-            this.showForm = true;
-        }
-    }
+	this.formError = null;
+
+	try {
+		this.editedEmployee = await getEmployee(employee.id);
+		this.showForm = true;
+
+		await this.loadFormData();
+	} catch {
+		this.formError = 'Nie udało się pobrać danych pracownika.';
+		this.showForm = true;
+	}
+}
 
     cancelForm() {
         this.showForm = false;
