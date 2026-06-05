@@ -43,7 +43,7 @@
             <EmployeeForm
                 employee={state.editedEmployee}
                 positions={state.positions}
-                users={state.availableUsers}
+                users={state.users}
                 saving={state.saving}
                 error={state.formError}
                 onSubmit={(val) => state.saveEmployee(val)}

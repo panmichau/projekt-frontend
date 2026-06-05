@@ -5,16 +5,18 @@
 		EmployeeFormValue,
 		EmployeeUserMode
 	} from '$lib/features/employees/employee-form.types';
+
 	import { untrack } from 'svelte';
+	import { createForm } from 'svelte-forms-lib';
+	import * as yup from 'yup';
+
 	import FormSection from '$lib/components/form/FormSection.svelte';
 	import FormError from '$lib/components/form/FormError.svelte';
 	import InputField from '../ui/InputField.svelte';
 	import SelectField from '$lib/components/form/SelectField.svelte';
 	import EmployeeUserModeField from '$lib/components/employees/EmployeeUserModeField.svelte';
 	import FormActions from '$lib/components/form/FormActions.svelte';
-	
-	import { createForm } from 'svelte-forms-lib';
-	import * as yup from 'yup';
+	import InfoBox from '$lib/components/form/InfoBox.svelte';
 
 	type Props = {
 		employee?: EmployeeDTO | null;
@@ -37,6 +39,7 @@
 	}: Props = $props();
 
 	const isEdit = $derived(Boolean(employee?.id));
+	const hasAssignedUser = $derived(Boolean(employee?.user?.id));
 
 	yup.setLocale({
 		mixed: {
@@ -54,12 +57,14 @@
 		phoneNumber: yup.string().required().max(12, 'Numer telefonu może mieć maksymalnie 12 znaków'),
 		position: yup.string().required(),
 
-		userMode: yup.mixed().required(),
+		userMode: yup.mixed<EmployeeUserMode>().required(),
+
 		userId: yup.string().when('userMode', {
 			is: 'existing',
 			then: (schema) => schema.required(),
 			otherwise: (schema) => schema.notRequired()
 		}),
+
 		email: yup
 			.string()
 			.email()
@@ -69,6 +74,7 @@
 				then: (schema) => schema.required(),
 				otherwise: (schema) => schema.notRequired()
 			}),
+
 		password: yup
 			.string()
 			.max(255, 'Hasło może mieć maksymalnie 255 znaków')
@@ -78,14 +84,20 @@
 				function (value) {
 					const userMode = this.parent.userMode;
 
-					if (userMode === 'new' && !isEdit) return value !== undefined && value.trim().length >= 8;
+					if (userMode === 'new') {
+						return value !== undefined && value.trim().length >= 8;
+					}
+
 					return true;
 				}
 			)
-			.test('conditional-password', 'To pole jest nie może być puste', function (value) {
+			.test('conditional-password', 'To pole nie może być puste', function (value) {
 				const userMode = this.parent.userMode;
 
-				if (userMode === 'new' && !isEdit) return value !== undefined && value.trim() !== '';
+				if (userMode === 'new') {
+					return value !== undefined && value.trim() !== '';
+				}
+
 				return true;
 			})
 	});
@@ -97,51 +109,50 @@
 			phoneNumber: untrack(() => employee?.phoneNumber ?? ''),
 			position: untrack(() => (employee?.position?.id ? String(employee.position.id) : '')),
 
-			userMode: untrack(() => (employee?.user?.id ? 'new' : 'existing')),
+			userMode: untrack<EmployeeUserMode>(() => {
+				if (employee?.user?.id) return 'existing';
+				return 'none';
+			}),
 			userId: untrack(() => (employee?.user?.id ? String(employee.user.id) : '')),
 			email: untrack(() => employee?.user?.email ?? ''),
 			password: ''
 		},
+
 		validationSchema: schema,
+
 		onSubmit: async (values) => {
-			const firstName = values.firstName;
-			const lastName = values.lastName;
-			const phoneNumber = values.phoneNumber;
-			const position = values.position;
-			const userMode = values.userMode as EmployeeUserMode;
-			const userId = values.userId;
-			const email = values.email;
-			const password = values.password;
-
-			console.log(userId);
-
 			await onSubmit({
-				firstName,
-				lastName,
-				phoneNumber,
-				position,
-				userMode,
-				userId,
-				email,
-				password
+				firstName: values.firstName,
+				lastName: values.lastName,
+				phoneNumber: values.phoneNumber,
+				position: values.position,
+				userMode: values.userMode as EmployeeUserMode,
+				userId: values.userId,
+				email: values.email,
+				password: values.password
 			});
 		}
 	});
 
-	const availableUsers = $derived(users.filter((user) => Boolean(user.id && user.email)));
 	const positionOptions = $derived(
-	positions
-		.filter((item) => item.id)
-		.map((item) => ({
-			value: String(item.id),
-			label: item.position ?? ''
-		}))
+		positions
+			.filter((position) => position.id !== undefined)
+			.map((position) => ({
+				value: String(position.id),
+				label: position.position ?? ''
+			}))
 	);
 
+	const availableUsers = $derived(
+	users.filter((user) => {
+		if (!user.id || !user.email) return false;
+
+		return !(user.roles ?? []).includes('ADMIN');
+	})
+);
+
 	const availableUserOptions = $derived(
-	availableUsers
-		.filter((user) => user.id)
-		.map((user) => ({
+		availableUsers.map((user) => ({
 			value: String(user.id),
 			label: `${user.email} - ${(user.roles ?? ['NONE']).join(', ')}`
 		}))
@@ -172,55 +183,58 @@
 			required
 		/>
 
-		{#if !isEdit}
-			<EmployeeUserModeField bind:value={$form.userMode} />
-		{/if}
-
-		{#if ($form.userMode === 'existing' && !isEdit) || (isEdit && !employee?.user?.id)}
-			<SelectField
-				label="Istniejące konto"
-				bind:value={$form.userId}
-				error={$errors.userId}
-				options={availableUserOptions}
-				placeholder="Wybierz konto użytkownika"
-				required
-				colSpan
-			/>
-
-			{#if availableUsers.length === 0}
-				<span class="text-xs text-zinc-500 md:col-span-2">
-					Brak dostępnych kont bez przypisanego pracownika.
-				</span>
-			{/if}
-		{:else if $form.userMode === 'new' || (isEdit && employee?.user?.id)}
-			<InputField
-				label="Email konta użytkownika"
-				type="email"
-				bind:value={$form.email}
-				error={$errors.email}
-				required
-			/>
-
-			<InputField
-				label={`Hasło ${isEdit ? '(zostaw puste, żeby nie zmieniać)' : ''}`}
-				type="password"
-				bind:value={$form.password}
-				error={$errors.password}
-				required={!isEdit && $form.userMode === 'new'}
+		{#if isEdit && hasAssignedUser}
+			<InfoBox
+				title="Przypisane konto użytkownika"
+				text={`Konto jest już przypisane: ${employee?.user?.email ?? ''}`}
 			/>
 		{:else}
-			<p class="border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600 md:col-span-2">
-				Pracownik zostanie zapisany bez konta użytkownika.
-			</p>
+			<EmployeeUserModeField bind:value={$form.userMode} showNewOption={!isEdit} />
+
+			{#if $form.userMode === 'existing'}
+				<SelectField
+					label="Istniejące konto"
+					bind:value={$form.userId}
+					error={$errors.userId}
+					options={availableUserOptions}
+					placeholder="Wybierz konto użytkownika"
+					required
+					colSpan
+				/>
+
+				{#if availableUsers.length === 0}
+					<span class="text-xs text-zinc-500 md:col-span-2">
+						Brak dostępnych kont bez przypisanego pracownika.
+					</span>
+				{/if}
+			{:else if $form.userMode === 'new'}
+				<InputField
+					label="Email konta użytkownika"
+					type="email"
+					bind:value={$form.email}
+					error={$errors.email}
+					required
+				/>
+
+				<InputField
+					label="Hasło"
+					type="password"
+					bind:value={$form.password}
+					error={$errors.password}
+					required
+				/>
+			{:else}
+				<InfoBox text="Pracownik zostanie zapisany bez konta użytkownika." />
+			{/if}
 		{/if}
 
 		<div class="md:col-span-2">
-		<FormActions
-		submitLabel={isEdit ? 'Zapisz zmiany' : 'Dodaj pracownika'}
-		savingLabel="Zapisywanie..."
-		{saving}
-		{onCancel}
-		/>
+			<FormActions
+				submitLabel={isEdit ? 'Zapisz zmiany' : 'Dodaj pracownika'}
+				savingLabel="Zapisywanie..."
+				{saving}
+				{onCancel}
+			/>
 		</div>
 	</form>
 </FormSection>

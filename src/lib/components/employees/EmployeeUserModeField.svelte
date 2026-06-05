@@ -1,8 +1,10 @@
 <script lang="ts">
 	let {
-		value = $bindable()
+		value = $bindable(),
+		showNewOption = true
 	}: {
 		value: string;
+		showNewOption?: boolean;
 	} = $props();
 </script>
 
@@ -15,10 +17,12 @@
 			<span>Bez konta</span>
 		</label>
 
-		<label class="flex items-center gap-2 border border-zinc-300 px-3 py-2 text-sm">
-			<input type="radio" bind:group={value} value="new" />
-			<span>Utwórz nowe konto</span>
-		</label>
+		{#if showNewOption}
+			<label class="flex items-center gap-2 border border-zinc-300 px-3 py-2 text-sm">
+				<input type="radio" bind:group={value} value="new" />
+				<span>Utwórz nowe konto</span>
+			</label>
+		{/if}
 
 		<label class="flex items-center gap-2 border border-zinc-300 px-3 py-2 text-sm">
 			<input type="radio" bind:group={value} value="existing" />
