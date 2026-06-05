@@ -4,17 +4,29 @@
 		canDelete?: boolean;
 		onEdit: (item: unknown) => void;
 		onDelete: (item: unknown) => void;
+		onView?: (item: unknown) => void;
 	};
 
 	let {
 		item,
 		canDelete = true,
 		onEdit,
-		onDelete
+		onDelete,
+		onView
 	}: Props = $props();
 </script>
 
 <div class="flex justify-end gap-3">
+
+	{#if onView}
+		<button
+			class="text-sm font-medium text-blue-700 hover:text-blue-900"
+			onclick={() => onView(item)}
+		>
+			Zobacz
+		</button>
+	{/if}
+
 	<button
 		class="text-sm font-medium text-black hover:text-zinc-700"
 		onclick={() => onEdit(item)}
