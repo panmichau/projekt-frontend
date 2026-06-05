@@ -1,47 +1,31 @@
 import type { EmployeeDTO, EmployeeSaveRequest } from '$lib/api/types';
-import type { EmployeeFormValue } from './employee-form.types';
+import type { EmployeeFormValue } from '$lib/features/employees/employee-form.types';
 
 export function buildEmployeeRequest(
 	value: EmployeeFormValue,
 	editedEmployee: EmployeeDTO | null
 ): EmployeeSaveRequest {
-	const baseEmployee = {
+	const baseEmployee: Omit<EmployeeSaveRequest, 'user'> = {
 		firstName: value.firstName.trim(),
 		lastName: value.lastName.trim(),
-		phoneNumber: value.phoneNumber.trim() || undefined,
+		phoneNumber: value.phoneNumber.trim(),
 		position: Number(value.position)
 	};
 
-	if (editedEmployee) {
-		if (value.userMode === 'none') {
-			return baseEmployee;
-		}
+	const currentUser = editedEmployee?.user;
 
-		if (value.userMode === 'existing') {
-			return {
-				...baseEmployee,
-				user: {
-					id: Number(value.userId)
-				}
-			};
-		}
-		
-		const user: NonNullable<EmployeeSaveRequest['user']> = {
-			id: editedEmployee.user?.id,
-			email: value.email.trim(),
-			roles: editedEmployee.user?.roles ?? ['NONE']
-		};
-
-		if (value.password.trim()) {
-			user.password = value.password;
-		}
-
+	if (editedEmployee?.id && currentUser?.id) {
 		return {
 			...baseEmployee,
-			user
+			user: {
+				id: currentUser.id,
+				email: currentUser.email,
+				roles: currentUser.roles
+			}
 		};
 	}
-	if (value.userMode === 'none'){
+
+	if (value.userMode === 'none') {
 		return baseEmployee;
 	}
 
@@ -54,14 +38,18 @@ export function buildEmployeeRequest(
 		};
 	}
 
-	return {
-		...baseEmployee,
-		user: {
-			email: value.email.trim(),
-			password: value.password,
-			roles: ['NONE']
-		}
-	};
+	if (value.userMode === 'new') {
+		return {
+			...baseEmployee,
+			user: {
+				email: value.email.trim(),
+				password: value.password,
+				roles: ['NONE']
+			}
+		};
+	}
+
+	return baseEmployee;
 }
             
     

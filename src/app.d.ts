@@ -1,3 +1,4 @@
+/// <reference types="gtag.js" />
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
@@ -12,6 +13,8 @@ declare global {
 	interface Window {
 		toggleErrorButton?: () => void;
 		toggleEmailButton?: () => void;
+		dataLayer: unknown[];
+		gtag: Gtag.Gtag;
 	}
 }
 

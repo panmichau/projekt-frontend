@@ -49,11 +49,5 @@ export const appModules: AppModule[] = [
 		description: 'Zarządzanie ładunkami.',
 		href: '/loads',
 		roles: ['ADMIN', 'MANAGER', 'FORWARDER']
-	},
-	{
-		title: 'Stany dostawy',
-		description: 'Podgląd i aktualizacja stanów dostawy.',
-		href: '/delivery-states',
-		roles: ['ADMIN', 'MANAGER', 'FORWARDER']
 	}
 ];

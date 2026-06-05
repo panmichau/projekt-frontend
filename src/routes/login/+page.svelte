@@ -41,6 +41,9 @@
 			} finally {
 				loading = false;
 			}
+			if (typeof window !== 'undefined' && typeof window.gtag !== 'undefined') {
+				window.gtag('event', 'login_submit');
+			}
 		}
 	});
 

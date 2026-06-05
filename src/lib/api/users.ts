@@ -12,6 +12,14 @@ export async function getUsers(page = 0, size = 10) {
 	});
 }
 
+export async function getUnassignedUsers() {
+	return apiFetch<UserSummaryDTO[]>('/user/unassigned', {
+		method: 'GET',
+		auth: true
+	});
+}
+
+
 export async function getUser(userId: number) {
 	return apiFetch<UserSummaryDTO>('/user', {
 		method: 'GET',

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+
 	type Props = {
 		title: string;
 		description: string;
@@ -8,7 +10,10 @@
 	let { title, description, href }: Props = $props();
 </script>
 
-<a class="block border border-zinc-300 bg-white p-5 text-black transition hover:bg-zinc-100" {href}>
+<a
+	class="block border border-zinc-300 bg-white p-5 text-black transition hover:bg-zinc-100"
+	href={resolve(href as '/')}
+>
 	<h3 class="mb-2 text-base font-semibold">
 		{title}
 	</h3>
