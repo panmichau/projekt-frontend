@@ -10,9 +10,10 @@
 		contracts: ContractSummaryDTO[];
 		onEdit: (contract: ContractSummaryDTO) => void;
 		onDelete: (contract: ContractSummaryDTO) => void;
+		onView?: (contract: ContractSummaryDTO) => void;
 	};
 
-	let { contracts, onEdit, onDelete }: Props = $props();
+	let { contracts, onEdit, onDelete, onView }: Props = $props();
 </script>
 
 <TableWrapper>
@@ -46,6 +47,7 @@
 						canDelete={Boolean(contract.id)}
 						onEdit={() => onEdit(contract)}
 						onDelete={() => onDelete(contract)}
+						onView={() => onView?.(contract)}
 					/>
 				</TableCell>
 			</tr>

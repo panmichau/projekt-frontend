@@ -10,6 +10,7 @@
 
 	import ClientForm from '$lib/components/clients/ClientForm.svelte';
 	import ClientTable from '$lib/components/clients/ClientTable.svelte';
+	import ClientDetails from '$lib/components/clients/ClientDetails.svelte';
 
 	const state = new ClientsState();
 
@@ -51,6 +52,13 @@
 		{/key}
 	{/if}
 
+	{#if state.showDetails && state.viewedClient}
+		<ClientDetails 
+			client={state.viewedClient} 
+			onClose={() => state.closeDetails()} 
+		/>
+	{/if}
+
 	{#if state.loading || state.deleting}
 		<div class="border border-zinc-300 bg-white p-5">
 			<p class="text-sm text-zinc-600">
@@ -67,6 +75,7 @@
 	{:else}
 		<ClientTable
 			clients={state.clients}
+			onView={(client) => state.startView(client)}
 			onEdit={(client) => state.startEdit(client)}
 			onDelete={(client) => state.removeClient(client)}
 		/>

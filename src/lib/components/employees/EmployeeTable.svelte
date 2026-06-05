@@ -9,9 +9,10 @@
 		employees: EmployeeSummaryDTO[];
 		onEdit: (employee: EmployeeSummaryDTO) => void;
 		onDelete: (employee: EmployeeSummaryDTO) => void;
+		onView?: (employee: EmployeeSummaryDTO) => void;
 	};
 
-	let { employees, onEdit, onDelete }: Props = $props();
+	let { employees, onEdit, onDelete, onView }: Props = $props();
 </script>
 
 <TableWrapper>
@@ -50,6 +51,7 @@
 						canDelete={Boolean(employee.id)}
 						onEdit={() => onEdit(employee)}
 						onDelete={() => onDelete(employee)}
+						onView={() => onView?.(employee)}
 					/>
 				</TableCell>
 			</tr>

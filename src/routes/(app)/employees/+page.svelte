@@ -9,6 +9,7 @@
 
     import EmployeeForm from '$lib/components/employees/EmployeeForm.svelte';
     import EmployeeTable from '$lib/components/employees/EmployeeTable.svelte';
+    import EmployeeDetails from '$lib/components/employees/EmployeeDetails.svelte';
 
     const state = new EmployeesState();
 
@@ -52,6 +53,13 @@
         {/key}
     {/if}
 
+    {#if state.showDetails && state.viewedEmployee}
+		<EmployeeDetails 
+			employee={state.viewedEmployee} 
+			onClose={() => state.closeDetails()} 
+		/>
+	{/if}
+
     {#if state.loading || state.deleting}
         <div class="border border-zinc-300 bg-white p-5">
             <p class="text-sm text-zinc-600">
@@ -70,6 +78,7 @@
             employees={state.employees} 
             onEdit={(emp) => state.startEdit(emp)} 
             onDelete={(emp) => state.removeEmployee(emp)} 
+            onView={(emp) => state.startView(emp)}
         />
 
         {#if state.page}
