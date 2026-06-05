@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+
 	type Props = {
 		title: string;
 		description?: string;
@@ -27,7 +29,7 @@
 	{#if backHref}
 		<a
 			class="inline-flex h-10 items-center justify-center border border-zinc-300 bg-white px-4 text-sm font-medium text-black hover:bg-zinc-100"
-			href={backHref}
+			href={resolve(backHref as '/')}
 		>
 			{backLabel}
 		</a>
