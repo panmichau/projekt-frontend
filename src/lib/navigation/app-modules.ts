@@ -1,13 +1,9 @@
-import { resolve } from '$app/paths';
-
 export type Role = 'NONE' | 'DRIVER' | 'FORWARDER' | 'MANAGER' | 'ADMIN';
-
-export type ValidAppRoute = Parameters<typeof resolve>[0];
 
 export type AppModule = {
 	title: string;
 	description: string;
-	href: ValidAppRoute;
+	href: string;
 	roles: Role[];
 };
 
@@ -42,12 +38,12 @@ export const appModules: AppModule[] = [
 		href: '/contracts',
 		roles: ['ADMIN', 'MANAGER', 'FORWARDER']
 	},
-	// {
-	// 	title: 'Kursy',
-	// 	description: 'Planowanie i obsługa kursów.',
-	// 	href: '/courses',
-	// 	roles: ['ADMIN', 'MANAGER', 'FORWARDER', 'DRIVER']
-	// },
+	{
+		title: 'Kursy',
+		description: 'Planowanie i obsługa kursów.',
+		href: '/courses',
+		roles: ['ADMIN', 'MANAGER', 'FORWARDER', 'DRIVER']
+	},
 	{
 		title: 'Ładunki',
 		description: 'Zarządzanie ładunkami.',
