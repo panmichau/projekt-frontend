@@ -20,6 +20,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/load": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getLoad"];
+        put: operations["updateLoad"];
+        post: operations["createLoad"];
+        delete: operations["deleteLoad"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/employee": {
         parameters: {
             query?: never;
@@ -31,22 +47,6 @@ export interface paths {
         put: operations["updateEmployee"];
         post: operations["createEmployee"];
         delete: operations["deleteEmployee"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/delivery-state": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["findDeliveryState"];
-        put: operations["updateDeliveryState"];
-        post: operations["createDeliveryState"];
-        delete: operations["deleteDeliveryState"];
         options?: never;
         head?: never;
         patch?: never;
@@ -111,22 +111,6 @@ export interface paths {
         put?: never;
         post: operations["createPosition"];
         delete: operations["deletePosition"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/load": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createLoad"];
-        delete: operations["deleteLoad"];
         options?: never;
         head?: never;
         patch?: never;
@@ -276,14 +260,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/employee/list": {
+    "/load/list": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["findEmployeeList"];
+        get: operations["getLoads"];
         put?: never;
         post?: never;
         delete?: never;
@@ -292,14 +276,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/delivery-state/list": {
+    "/employee/list": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["findDeliveryStateList"];
+        get: operations["findEmployeeList"];
         put?: never;
         post?: never;
         delete?: never;
@@ -394,6 +378,59 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        LoadUpdateRequest: {
+            identifier: string;
+            type: string;
+            /** @enum {string} */
+            size?: "SMALL" | "MEDIUM" | "LARGE";
+            /** Format: float */
+            weight?: number;
+            /** Format: double */
+            worth?: number;
+            /** Format: int64 */
+            contractId?: number;
+            /** @enum {string} */
+            deliveryState?: "PENDING" | "ACCEPTED" | "IN_WAREHOUSE" | "ASSIGNED" | "IN_TRANSIT" | "OUT_FOR_DELIVERY" | "DELIVERED" | "FAILED_ATTEMPT" | "RETURNED" | "CANCELLED";
+            /** Format: int64 */
+            version?: number;
+            deliveryTime?: string;
+            /** Format: date-time */
+            sendDate?: string;
+            /** Format: date-time */
+            deliveryDate?: string;
+        };
+        ContractSummaryDTO: {
+            /** Format: int64 */
+            id?: number;
+            name?: string;
+            /** Format: int64 */
+            clientId?: number;
+            clientName?: string;
+        };
+        LoadDTO: {
+            /** Format: int64 */
+            id?: number;
+            identifier?: string;
+            type?: string;
+            /** @enum {string} */
+            size?: "SMALL" | "MEDIUM" | "LARGE";
+            /** Format: float */
+            weight?: number;
+            /** Format: double */
+            worth?: number;
+            contract?: components["schemas"]["ContractSummaryDTO"];
+            /** @enum {string} */
+            deliveryState?: "PENDING" | "ACCEPTED" | "IN_WAREHOUSE" | "ASSIGNED" | "IN_TRANSIT" | "OUT_FOR_DELIVERY" | "DELIVERED" | "FAILED_ATTEMPT" | "RETURNED" | "CANCELLED";
+            /** Format: int64 */
+            courseId?: number;
+            /** Format: int64 */
+            version?: number;
+            deliveryTime?: string;
+            /** Format: date-time */
+            sendDate?: string;
+            /** Format: date-time */
+            deliveryDate?: string;
+        };
         EmployeeSaveRequest: {
             firstName: string;
             lastName: string;
@@ -430,26 +467,6 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
-        DeliveryStateSaveRequest: {
-            location: string;
-            /** @enum {string} */
-            deliveryState: "PENDING" | "ACCEPTED" | "IN_WAREHOUSE" | "ASSIGNED" | "IN_TRANSIT" | "OUT_FOR_DELIVERY" | "DELIVERED" | "FAILED_ATTEMPT" | "RETURNED" | "CANCELLED";
-            comment?: string;
-            /** Format: int64 */
-            version?: number;
-        };
-        DeliveryStateDTO: {
-            /** Format: int64 */
-            id?: number;
-            location?: string;
-            /** @enum {string} */
-            deliveryState?: "PENDING" | "ACCEPTED" | "IN_WAREHOUSE" | "ASSIGNED" | "IN_TRANSIT" | "OUT_FOR_DELIVERY" | "DELIVERED" | "FAILED_ATTEMPT" | "RETURNED" | "CANCELLED";
-            comment?: string;
-            /** Format: date-time */
-            lastUpdated?: string;
-            /** Format: int64 */
-            version?: number;
-        };
         CourseSaveRequest: {
             destination: string;
             /** Format: date-time */
@@ -461,14 +478,6 @@ export interface components {
             driver?: number;
             /** Format: int64 */
             version?: number;
-        };
-        ContractSummaryDTO: {
-            /** Format: int64 */
-            id?: number;
-            name?: string;
-            /** Format: int64 */
-            clientId?: number;
-            clientName?: string;
         };
         CourseDTO: {
             /** Format: int64 */
@@ -495,6 +504,8 @@ export interface components {
             id?: number;
             identifier?: string;
             contract?: components["schemas"]["ContractSummaryDTO"];
+            /** @enum {string} */
+            deliveryState?: "PENDING" | "ACCEPTED" | "IN_WAREHOUSE" | "ASSIGNED" | "IN_TRANSIT" | "OUT_FOR_DELIVERY" | "DELIVERED" | "FAILED_ATTEMPT" | "RETURNED" | "CANCELLED";
         };
         ContractSaveRequest: {
             name: string;
@@ -552,26 +563,8 @@ export interface components {
             worth?: number;
             /** Format: int64 */
             contractId?: number;
-            /** Format: int64 */
-            deliveryStateId?: number;
-            /** Format: int64 */
-            version?: number;
-        };
-        LoadDTO: {
-            /** Format: int64 */
-            id?: number;
-            identifier?: string;
-            type?: string;
             /** @enum {string} */
-            size?: "SMALL" | "MEDIUM" | "LARGE";
-            /** Format: float */
-            weight?: number;
-            /** Format: double */
-            worth?: number;
-            contract?: components["schemas"]["ContractSummaryDTO"];
-            deliveryState?: components["schemas"]["DeliveryStateDTO"];
-            /** Format: int64 */
-            courseId?: number;
+            deliveryState?: "PENDING" | "ACCEPTED" | "IN_WAREHOUSE" | "ASSIGNED" | "IN_TRANSIT" | "OUT_FOR_DELIVERY" | "DELIVERED" | "FAILED_ATTEMPT" | "RETURNED" | "CANCELLED";
             /** Format: int64 */
             version?: number;
         };
@@ -627,6 +620,10 @@ export interface components {
             content?: components["schemas"]["UserSummaryDTO"][];
             page?: components["schemas"]["PageMetadata"];
         };
+        PagedModelLoadSummaryDTO: {
+            content?: components["schemas"]["LoadSummaryDTO"][];
+            page?: components["schemas"]["PageMetadata"];
+        };
         EmployeeSummaryDTO: {
             /** Format: int64 */
             id?: number;
@@ -636,10 +633,6 @@ export interface components {
         };
         PagedModelEmployeeSummaryDTO: {
             content?: components["schemas"]["EmployeeSummaryDTO"][];
-            page?: components["schemas"]["PageMetadata"];
-        };
-        PagedModelDeliveryStateDTO: {
-            content?: components["schemas"]["DeliveryStateDTO"][];
             page?: components["schemas"]["PageMetadata"];
         };
         PagedModelCourseSummaryDTO: {
@@ -759,6 +752,98 @@ export interface operations {
             };
         };
     };
+    getLoad: {
+        parameters: {
+            query: {
+                loadId: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoadDTO"];
+                };
+            };
+        };
+    };
+    updateLoad: {
+        parameters: {
+            query: {
+                loadId: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoadUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoadDTO"];
+                };
+            };
+        };
+    };
+    createLoad: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoadSaveRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoadDTO"];
+                };
+            };
+        };
+    };
+    deleteLoad: {
+        parameters: {
+            query: {
+                loadId: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     findEmployee: {
         parameters: {
             query: {
@@ -843,98 +928,6 @@ export interface operations {
             header: {
                 Authorization: string;
             };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    findDeliveryState: {
-        parameters: {
-            query: {
-                deliveryStateId: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DeliveryStateDTO"];
-                };
-            };
-        };
-    };
-    updateDeliveryState: {
-        parameters: {
-            query: {
-                deliveryStateId: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeliveryStateSaveRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DeliveryStateDTO"];
-                };
-            };
-        };
-    };
-    createDeliveryState: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DeliveryStateSaveRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DeliveryStateDTO"];
-                };
-            };
-        };
-    };
-    deleteDeliveryState: {
-        parameters: {
-            query: {
-                deliveryStateId: number;
-            };
-            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -1289,50 +1282,6 @@ export interface operations {
             };
         };
     };
-    createLoad: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoadSaveRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["LoadDTO"];
-                };
-            };
-        };
-    };
-    deleteLoad: {
-        parameters: {
-            query: {
-                loadId: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     register: {
         parameters: {
             query?: never;
@@ -1532,6 +1481,28 @@ export interface operations {
             };
         };
     };
+    getLoads: {
+        parameters: {
+            query: {
+                pageable: components["schemas"]["Pageable"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PagedModelLoadSummaryDTO"];
+                };
+            };
+        };
+    };
     findEmployeeList: {
         parameters: {
             query: {
@@ -1550,28 +1521,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["PagedModelEmployeeSummaryDTO"];
-                };
-            };
-        };
-    };
-    findDeliveryStateList: {
-        parameters: {
-            query: {
-                pageable: components["schemas"]["Pageable"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["PagedModelDeliveryStateDTO"];
                 };
             };
         };
