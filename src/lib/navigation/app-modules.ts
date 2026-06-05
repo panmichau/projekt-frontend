@@ -1,9 +1,13 @@
+import { resolve } from '$app/paths';
+
 export type Role = 'NONE' | 'DRIVER' | 'FORWARDER' | 'MANAGER' | 'ADMIN';
+
+export type ValidAppRoute = Parameters<typeof resolve>[0];
 
 export type AppModule = {
 	title: string;
 	description: string;
-	href: string;
+	href: ValidAppRoute;
 	roles: Role[];
 };
 
@@ -38,22 +42,16 @@ export const appModules: AppModule[] = [
 		href: '/contracts',
 		roles: ['ADMIN', 'MANAGER', 'FORWARDER']
 	},
-	{
-		title: 'Kursy',
-		description: 'Planowanie i obsługa kursów.',
-		href: '/courses',
-		roles: ['ADMIN', 'MANAGER', 'FORWARDER', 'DRIVER']
-	},
+	// {
+	// 	title: 'Kursy',
+	// 	description: 'Planowanie i obsługa kursów.',
+	// 	href: '/courses',
+	// 	roles: ['ADMIN', 'MANAGER', 'FORWARDER', 'DRIVER']
+	// },
 	{
 		title: 'Ładunki',
 		description: 'Zarządzanie ładunkami.',
 		href: '/loads',
-		roles: ['ADMIN', 'MANAGER', 'FORWARDER']
-	},
-	{
-		title: 'Stany dostawy',
-		description: 'Podgląd i aktualizacja stanów dostawy.',
-		href: '/delivery-states',
 		roles: ['ADMIN', 'MANAGER', 'FORWARDER']
 	}
 ];
