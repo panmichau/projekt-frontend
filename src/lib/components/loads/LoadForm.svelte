@@ -48,7 +48,7 @@
 			weight: untrack(() => load?.weight ? String(load.weight) : ''),
 			worth: untrack(() => load?.worth !== undefined ? String(load.worth) : ''),
 			contractId: untrack(() => load?.contract?.id ? String(load.contract.id) : ''),
-			deliveryStateId: untrack(() => load?.deliveryState?.id ? String(load.deliveryState.id) : '')
+			deliveryStateId: untrack(() => load?.deliveryState ??  '')
 		},
 		validationSchema: schema,
 		onSubmit: (values) => onSubmit(values as LoadFormValue)
@@ -62,8 +62,14 @@
 
 	const stateOptions = [
 		{ value: 'PENDING', label: 'Oczekujący' },
+		{ value: 'ACCEPTED', label: 'Zaakceptowany' },
+		{ value: 'IN_WAREHOUSE', label: 'W magazynie' },
+		{ value: 'ASSIGNED', label: 'Przypisany' },
 		{ value: 'IN_TRANSIT', label: 'W drodze' },
+		{ value: 'OUT_FOR_DELIVERY', label: 'Wydany do doręczenia' },
 		{ value: 'DELIVERED', label: 'Dostarczono' },
+		{ value: 'FAILED_ATTEMPT', label: 'Nieudana próba' },
+		{ value: 'RETURNED', label: 'Zwrócono' },
 		{ value: 'CANCELLED', label: 'Anulowano' }
 	];
 
