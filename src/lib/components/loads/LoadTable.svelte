@@ -9,9 +9,10 @@
 		loads: LoadSummaryDTO[];
 		onEdit: (load: LoadSummaryDTO) => void;
 		onDelete: (load: LoadSummaryDTO) => void;
+		onView?: (load: LoadSummaryDTO) => void;
 	};
 
-	let { loads, onEdit, onDelete }: Props = $props();
+	let { loads, onEdit, onDelete, onView }: Props = $props();
 </script>
 
 <TableWrapper>
@@ -43,6 +44,7 @@
                     item={load} 
                     onEdit={(item) => onEdit(item as LoadSummaryDTO)} 
                     onDelete={(item) => onDelete(item as LoadSummaryDTO)} 
+					onView={onView ? (item) => onView(item as LoadSummaryDTO) : undefined}
                 />
                 </TableCell>
 			</tr>

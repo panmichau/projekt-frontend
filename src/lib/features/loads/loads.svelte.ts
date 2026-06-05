@@ -1,4 +1,4 @@
-import { getLoads, getLoad, createLoad, deleteLoad } from '$lib/api/loads';
+import { getLoads, getLoad, createLoad, deleteLoad, updateLoad } from '$lib/api/loads';
 import type { LoadSummaryDTO, LoadDTO, ContractSummaryDTO, PageMetadata } from '$lib/api/types';
 import { buildLoadRequest } from './load-request';
 import type { LoadFormValue } from './load-form.types';
@@ -18,6 +18,9 @@ export class LoadsState {
 
 	showForm = $state(false);
 	editedLoad = $state<LoadDTO | null>(null);
+
+	showDetails = $state(false);
+	viewedLoad = $state<LoadDTO | null>(null);
 
 	async loadLoads(pageNumber = 0) {
 		this.loading = true;
@@ -44,6 +47,7 @@ export class LoadsState {
 	async startEdit(load: LoadSummaryDTO) {
 		if (!load.id) return;
 		this.formError = null;
+		this.showDetails = false;
 		try {
 			this.editedLoad = await getLoad(load.id);
 			this.showForm = true;
@@ -59,6 +63,24 @@ export class LoadsState {
 		this.formError = null;
 	}
 
+	async startView(load: LoadSummaryDTO) {
+		if (!load.id) return;
+		this.error = null;
+		this.showForm = false;
+		
+		try {
+			this.viewedLoad = await getLoad(load.id);
+			this.showDetails = true;
+		} catch {
+			this.error = 'Nie udało się pobrać szczegółów ładunku.';
+		}
+	}
+
+	closeDetails() {
+		this.showDetails = false;
+		this.viewedLoad = null;
+	}
+
 	async saveLoad(value: LoadFormValue) {
 		this.saving = true;
 		this.formError = null;
@@ -66,8 +88,7 @@ export class LoadsState {
 			const request = buildLoadRequest(value);
 
 			if (this.editedLoad?.id) {
-				// w razie dodania updateLoad w backendzie odkomentować
-				// await updateLoad(this.editedLoad.id, request);
+				await updateLoad(this.editedLoad.id, request);
 				console.warn('Backend nie ma jeszcze endpointu PUT /load');
 			} else {
 				await createLoad(request);
@@ -94,6 +115,11 @@ export class LoadsState {
 		try {
 			await deleteLoad(load.id);
 			await this.loadLoads(this.page?.number ?? 0);
+
+			if (this.viewedLoad?.id === load.id) {
+				this.closeDetails();
+			}
+			
 		} catch {
 			this.error = 'Nie udało się usunąć ładunku.';
 		} finally {

@@ -34,6 +34,9 @@ export class ContractsState {
 	showForm = $state(false);
 	editedContract = $state<ContractDTO | null>(null);
 
+	showDetails = $state(false);
+	viewedContract = $state<ContractDTO | null>(null);
+
 	async loadContracts(pageNumber = 0) {
 		this.loading = true;
 		this.error = null;
@@ -75,6 +78,7 @@ export class ContractsState {
 		this.editedContract = null;
 		this.formError = null;
 		this.showForm = false;
+		this.showDetails = false;
 
 		await this.loadFormData();
 
@@ -86,6 +90,7 @@ export class ContractsState {
 
 		this.formError = null;
 		this.showForm = false;
+		this.showDetails = false;
 
 		try {
 			this.editedContract = await getContract(contract.id);
@@ -105,6 +110,23 @@ export class ContractsState {
 		this.formError = null;
 	}
 
+	async startView(contract: ContractSummaryDTO) {
+		if (!contract.id) return;
+		this.error = null;
+		this.showForm = false;
+		try {
+			this.viewedContract = await getContract(contract.id);
+			this.showDetails = true;
+		} catch {
+			this.error = 'Nie udało się pobrać szczegółów kontraktu.';
+		}
+	}
+
+	closeDetails() {
+		this.showDetails = false;
+		this.viewedContract = null;
+	}
+	
 	async saveContract(value: ContractFormValue) {
 		this.saving = true;
 		this.formError = null;

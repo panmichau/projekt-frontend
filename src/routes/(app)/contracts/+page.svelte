@@ -11,6 +11,7 @@
 	import ContractForm from '$lib/components/contracts/ContractForm.svelte';
 	import ContractTable from '$lib/components/contracts/ContractTable.svelte';
     import ContractFilters from '$lib/components/contracts/ContractFilters.svelte';
+	import ContractDetails from '$lib/components/contracts/ContractDetails.svelte';
 
 	const state = new ContractsState();
 
@@ -59,6 +60,13 @@
 		{/key}
 	{/if}
 
+	{#if state.showDetails && state.viewedContract}
+        <ContractDetails 
+            contract={state.viewedContract} 
+            onClose={() => state.closeDetails()} 
+        />
+    {/if}
+
 	{#if state.loading || state.deleting}
 		<div class="border border-zinc-300 bg-white p-5">
 			<p class="text-sm text-zinc-600">
@@ -80,6 +88,7 @@
 			contracts={state.contracts}
 			onEdit={(contract) => void state.startEdit(contract)}
 			onDelete={(contract) => void state.removeContract(contract)}
+			onView={(contract) => state.startView(contract)}
 		/>
 
 		{#if state.page}

@@ -33,6 +33,15 @@ export class EmployeesState {
     showForm = $state(false);
     editedEmployee = $state<EmployeeDTO | null>(null);
 
+    showDetails = $state(false);
+    viewedEmployee = $state<EmployeeDTO | null>(null);
+
+    availableUsers = $derived(
+        this.users.filter((user) => {
+            if (!user.id || !user.email) return false;
+            return !this.assignedUserIds.includes(user.id);
+        })
+    );
 
     async loadEmployees(pageNumber = 0) {
         this.loading = true;
@@ -65,14 +74,18 @@ export class EmployeesState {
         }
     }
 
-async startCreate() {
-	this.editedEmployee = null;
-	this.formError = null;
-	this.showForm = true;
+    startCreate() {
+        this.editedEmployee = null;
+        this.formError = null;
+        this.showForm = true;
+        this.showDetails = false;
+    }
 
 	await this.loadFormData();
 }
 
+        this.formError = null;
+        this.showDetails = false;
 async startEdit(employee: EmployeeSummaryDTO) {
 	if (!employee.id) return;
 
@@ -88,6 +101,23 @@ async startEdit(employee: EmployeeSummaryDTO) {
 		this.showForm = true;
 	}
 }
+
+    async startView(employee: EmployeeSummaryDTO) {
+		if (!employee.id) return;
+		this.error = null;
+		this.showForm = false;
+		try {
+			this.viewedEmployee = await getEmployee(employee.id);
+			this.showDetails = true;
+		} catch {
+			this.error = 'Nie udało się pobrać szczegółów pracownika.';
+		}
+	}
+
+	closeDetails() {
+		this.showDetails = false;
+		this.viewedEmployee = null;
+	}
 
     cancelForm() {
         this.showForm = false;

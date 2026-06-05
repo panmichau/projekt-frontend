@@ -29,6 +29,9 @@ export class ClientsState {
 	showForm = $state(false);
 	editedClient = $state<ClientDTO | null>(null);
 
+	showDetails = $state(false);
+	viewedClient = $state<ClientDTO | null>(null);
+
 	async loadClients(pageNumber = 0) {
 		this.loading = true;
 		this.error = null;
@@ -49,12 +52,14 @@ export class ClientsState {
 		this.editedClient = null;
 		this.formError = null;
 		this.showForm = true;
+		this.showDetails = false;
 	}
 
 	async startEdit(client: ClientSummaryDTO) {
 		if (!client.id) return;
 
 		this.formError = null;
+		this.showDetails = false;
 
 		try {
 			this.editedClient = await getClient(client.id);
@@ -65,11 +70,30 @@ export class ClientsState {
 		}
 	}
 
+	async startView(client: ClientSummaryDTO) {
+		if (!client.id) return;
+		this.error = null;
+		this.showForm = false;
+		try {
+			this.viewedClient = await getClient(client.id);
+			this.showDetails = true;
+		} catch {
+			this.error = 'Nie udało się pobrać szczegółów klienta.';
+		}
+	}
+
+	closeDetails() {
+		this.showDetails = false;
+		this.viewedClient = null;
+	}
+
 	cancelForm() {
 		this.showForm = false;
 		this.editedClient = null;
 		this.formError = null;
 	}
+
+	
 
 	async saveClient(value: ClientFormValue) {
 		this.saving = true;

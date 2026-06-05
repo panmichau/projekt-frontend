@@ -9,6 +9,7 @@
 
 	import LoadForm from '$lib/components/loads/LoadForm.svelte';
 	import LoadTable from '$lib/components/loads/LoadTable.svelte';
+	import LoadDetails from '$lib/components/loads/LoadDetails.svelte';
 
 	const state = new LoadsState();
 
@@ -53,6 +54,13 @@
 		{/key}
 	{/if}
 
+	{#if state.showDetails && state.viewedLoad}
+		<LoadDetails 
+			load={state.viewedLoad} 
+			onClose={() => state.closeDetails()} 
+		/>
+	{/if}
+
 	{#if state.loading || state.deleting}
 		<div class="border border-zinc-300 bg-white p-5">
 			<p class="text-sm text-zinc-600">
@@ -67,6 +75,7 @@
 	{:else}
 		<LoadTable
 			loads={state.loads}
+			onView={(load) => state.startView(load)}
 			onEdit={(load) => state.startEdit(load)}
 			onDelete={(load) => state.removeLoad(load)}
 		/>
