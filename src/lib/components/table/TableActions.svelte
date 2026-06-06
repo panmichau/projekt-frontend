@@ -1,19 +1,16 @@
 <script lang="ts">
+	import { auth } from '$lib/auth/auth.svelte';
+
 	type Props = {
 		item: unknown;
 		canDelete?: boolean;
 		onEdit?: (item: unknown) => void;
 		onDelete?: (item: unknown) => void;
 		onView?: (item: unknown) => void;
+		editRoles: string[];
 	};
 
-	let {
-		item,
-		canDelete = true,
-		onEdit,
-		onDelete,
-		onView
-	}: Props = $props();
+	let { item, canDelete = true, onEdit, onDelete, onView, editRoles }: Props = $props();
 </script>
 
 <div class="flex justify-end gap-3">
@@ -27,7 +24,7 @@
 		</button>
 	{/if}
 
-	{#if onEdit}
+	{#if onEdit && auth.hasAnyRole(editRoles)}
 		<button
 			type="button"
 			class="text-sm font-medium text-black hover:text-zinc-700"
@@ -37,7 +34,7 @@
 		</button>
 	{/if}
 
-	{#if onDelete && canDelete}
+	{#if onDelete && canDelete && auth.hasAnyRole(editRoles)}
 		<button
 			type="button"
 			class="text-sm font-medium text-red-700 hover:text-red-900"

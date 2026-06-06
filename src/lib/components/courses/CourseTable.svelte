@@ -11,9 +11,10 @@
 		onView: (course: CourseSummaryDTO) => void;
 		onEdit: (course: CourseSummaryDTO) => void;
 		onDelete: (course: CourseSummaryDTO) => void;
+		editRoles: string[];
 	};
 
-	let { courses, onView, onEdit, onDelete }: Props = $props();
+	let { courses, onView, onEdit, onDelete, editRoles }: Props = $props();
 
 	const EMPTY_VALUE = '-';
 
@@ -73,6 +74,7 @@
 						onView={() => onView(course)}
 						onEdit={() => onEdit(course)}
 						onDelete={() => onDelete(course)}
+						{editRoles}
 					/>
 				</TableCell>
 			</tr>
