@@ -10,9 +10,10 @@
 		onEdit: (client: ClientSummaryDTO) => void;
 		onDelete: (client: ClientSummaryDTO) => void;
 		onView?: (client: ClientSummaryDTO) => void;
+		editRoles?: string[];
 	};
 
-	let { clients, onEdit, onDelete, onView }: Props = $props();
+	let { clients, onEdit, onDelete, onView, editRoles }: Props = $props();
 </script>
 
 <TableWrapper>
@@ -47,6 +48,7 @@
 						onEdit={() => onEdit(client)}
 						onDelete={() => onDelete(client)}
 						onView={() => onView?.(client)}
+						{editRoles}
 					/>
 				</TableCell>
 			</tr>

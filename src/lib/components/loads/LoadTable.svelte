@@ -10,9 +10,10 @@
 		onEdit: (load: LoadSummaryDTO) => void;
 		onDelete: (load: LoadSummaryDTO) => void;
 		onView?: (load: LoadSummaryDTO) => void;
+		editRoles?: string[];
 	};
 
-	let { loads, onEdit, onDelete, onView }: Props = $props();
+	let { loads, onEdit, onDelete, onView, editRoles }: Props = $props();
 </script>
 
 <TableWrapper>
@@ -40,13 +41,14 @@
 					{load.contract?.name ?? 'Brak'}
 				</TableCell>
 				<TableCell align="right">
-                <TableActions 
-                    item={load} 
-                    onEdit={(item) => onEdit(item as LoadSummaryDTO)} 
-                    onDelete={(item) => onDelete(item as LoadSummaryDTO)} 
-					onView={onView ? (item) => onView(item as LoadSummaryDTO) : undefined}
-                />
-                </TableCell>
+					<TableActions
+						item={load}
+						onEdit={(item) => onEdit(item as LoadSummaryDTO)}
+						onDelete={(item) => onDelete(item as LoadSummaryDTO)}
+						onView={onView ? (item) => onView(item as LoadSummaryDTO) : undefined}
+						{editRoles}
+					/>
+				</TableCell>
 			</tr>
 		{/each}
 	</tbody>

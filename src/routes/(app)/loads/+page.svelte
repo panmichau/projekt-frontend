@@ -10,14 +10,14 @@
 	import LoadForm from '$lib/components/loads/LoadForm.svelte';
 	import LoadTable from '$lib/components/loads/LoadTable.svelte';
 	import LoadDetails from '$lib/components/loads/LoadDetails.svelte';
+	import { auth } from '$lib/auth/auth.svelte';
 
 	const state = new LoadsState();
 
+	const editRoles = ['FORWARDER', 'MANAGER', 'ADMIN'];
+
 	onMount(async () => {
-		await Promise.all([
-			state.loadLoads(),
-			state.loadFormData()
-		]);
+		await Promise.all([state.loadLoads(), state.loadFormData()]);
 	});
 </script>
 
@@ -29,13 +29,15 @@
 	<div class="mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 		<PageHeader title="Ładunki" description="Ewidencja i zarządzanie ładunkami." />
 
-		<button
-			type="button"
-			class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
-			onclick={() => state.startCreate()}
-		>
-			Dodaj ładunek
-		</button>
+		{#if auth.hasAnyRole(editRoles)}
+			<button
+				type="button"
+				class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
+				onclick={() => state.startCreate()}
+			>
+				Dodaj ładunek
+			</button>
+		{/if}
 	</div>
 
 	<p class="mb-4 text-sm text-zinc-600">
@@ -55,10 +57,7 @@
 	{/if}
 
 	{#if state.showDetails && state.viewedLoad}
-		<LoadDetails 
-			load={state.viewedLoad} 
-			onClose={() => state.closeDetails()} 
-		/>
+		<LoadDetails load={state.viewedLoad} onClose={() => state.closeDetails()} />
 	{/if}
 
 	{#if state.loading || state.deleting}
@@ -70,14 +69,17 @@
 	{:else if state.error}
 		<ErrorMessage message={state.error} retry={() => state.loadLoads()} />
 	{:else if state.loads.length === 0}
-		<EmptyState title="Brak ładunków" 
-        description="W bazie danych nie znaleziono żadnych ładunków. Kliknij przycisk powyżej, aby dodać pierwszy."/>
+		<EmptyState
+			title="Brak ładunków"
+			description="W bazie danych nie znaleziono żadnych ładunków. Kliknij przycisk powyżej, aby dodać pierwszy."
+		/>
 	{:else}
 		<LoadTable
 			loads={state.loads}
 			onView={(load) => state.startView(load)}
 			onEdit={(load) => state.startEdit(load)}
 			onDelete={(load) => state.removeLoad(load)}
+			{editRoles}
 		/>
 
 		{#if state.page}

@@ -10,10 +10,13 @@
 
 	import ContractForm from '$lib/components/contracts/ContractForm.svelte';
 	import ContractTable from '$lib/components/contracts/ContractTable.svelte';
-    import ContractFilters from '$lib/components/contracts/ContractFilters.svelte';
+	import ContractFilters from '$lib/components/contracts/ContractFilters.svelte';
 	import ContractDetails from '$lib/components/contracts/ContractDetails.svelte';
+	import { auth } from '$lib/auth/auth.svelte';
 
 	const state = new ContractsState();
+
+	const editRoles = ['FORWARDER', 'MANAGER', 'ADMIN'];
 
 	onMount(async () => {
 		await state.loadContracts();
@@ -28,20 +31,22 @@
 	<div class="mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 		<PageHeader title="Kontrakty" description="Lista kontraktów klientów." />
 
-		<button
-			type="button"
-			class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
-			onclick={() => void state.startCreate()}
-		>
-			Dodaj kontrakt
-		</button>
+		{#if auth.hasAnyRole(editRoles)}
+			<button
+				type="button"
+				class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
+				onclick={() => void state.startCreate()}
+			>
+				Dodaj kontrakt
+			</button>
+		{/if}
 	</div>
 
-   <ContractFilters
-	bind:clientName={state.clientName}
-	onSearch={() => state.search()}
-	onClear={() => state.clearFilters()}
-/>
+	<ContractFilters
+		bind:clientName={state.clientName}
+		onSearch={() => state.search()}
+		onClear={() => state.clearFilters()}
+	/>
 
 	<p class="mb-4 text-sm text-zinc-600">
 		Liczba kontraktów: {state.contracts.length}
@@ -61,11 +66,8 @@
 	{/if}
 
 	{#if state.showDetails && state.viewedContract}
-        <ContractDetails 
-            contract={state.viewedContract} 
-            onClose={() => state.closeDetails()} 
-        />
-    {/if}
+		<ContractDetails contract={state.viewedContract} onClose={() => state.closeDetails()} />
+	{/if}
 
 	{#if state.loading || state.deleting}
 		<div class="border border-zinc-300 bg-white p-5">
@@ -89,6 +91,7 @@
 			onEdit={(contract) => void state.startEdit(contract)}
 			onDelete={(contract) => void state.removeContract(contract)}
 			onView={(contract) => state.startView(contract)}
+			{editRoles}
 		/>
 
 		{#if state.page}

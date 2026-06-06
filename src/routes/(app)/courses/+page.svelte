@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { auth } from '$lib/auth/auth.svelte';
 	import { onMount } from 'svelte';
 	import CourseDetails from '$lib/components/courses/CourseDetails.svelte';
 	import CourseForm from '$lib/components/courses/CourseForm.svelte';
@@ -10,6 +11,7 @@
 	import { CoursesState } from '$lib/features/courses/courses.svelte';
 
 	const state = new CoursesState();
+	const editRoles = ['FORWARDER', 'MANAGER', 'ADMIN'];
 
 	onMount(() => {
 		void state.loadCourses();
@@ -20,13 +22,15 @@
 	<div class="mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 		<PageHeader title="Kursy" description="Planowanie i obsługa kursów transportowych." />
 
-		<button
-			type="button"
-			class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
-			onclick={() => void state.startCreate()}
-		>
-			Dodaj kurs
-		</button>
+		{#if auth.hasAnyRole(editRoles)}
+			<button
+				type="button"
+				class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
+				onclick={() => void state.startCreate()}
+			>
+				Dodaj kurs
+			</button>
+		{/if}
 	</div>
 
 	<p class="mb-4 text-sm text-zinc-600">
@@ -47,7 +51,7 @@
 		{/key}
 	{/if}
 	{#if state.showDetails && state.viewedCourse}
-	<CourseDetails course={state.viewedCourse} onClose={() => state.closeDetails()} />
+		<CourseDetails course={state.viewedCourse} onClose={() => state.closeDetails()} />
 	{/if}
 
 	{#if state.loading || state.deleting}
@@ -69,6 +73,7 @@
 			onView={(course) => void state.startView(course)}
 			onEdit={(course) => void state.startEdit(course)}
 			onDelete={(course) => void state.removeCourse(course)}
+			{editRoles}
 		/>
 
 		{#if state.page}
