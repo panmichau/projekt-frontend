@@ -10,6 +10,6 @@ export function buildLoadRequest(value: LoadFormValue): LoadSaveRequest {
 		worth: parseFloat(value.worth),
 		contractId: parseInt(value.contractId, 10),
 		deliveryState: value.deliveryStateId as DeliveryStatesEnum,
-        version: 1
+		version: 1
 	};
 }

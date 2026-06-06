@@ -33,7 +33,7 @@
 	>
 		<option value="">{placeholder}</option>
 
-		{#each options as option(option.value)}
+		{#each options as option (option.value)}
 			<option value={option.value}>{option.label}</option>
 		{/each}
 	</select>

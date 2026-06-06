@@ -144,12 +144,12 @@
 	);
 
 	const availableUsers = $derived(
-	users.filter((user) => {
-		if (!user.id || !user.email) return false;
+		users.filter((user) => {
+			if (!user.id || !user.email) return false;
 
-		return !(user.roles ?? []).includes('ADMIN');
-	})
-);
+			return !(user.roles ?? []).includes('ADMIN');
+		})
+	);
 
 	const availableUserOptions = $derived(
 		availableUsers.map((user) => ({
@@ -172,7 +172,12 @@
 
 		<InputField label="Nazwisko" bind:value={$form.lastName} error={$errors.lastName} required />
 
-		<InputField label="Telefon" bind:value={$form.phoneNumber} error={$errors.phoneNumber} required />
+		<InputField
+			label="Telefon"
+			bind:value={$form.phoneNumber}
+			error={$errors.phoneNumber}
+			required
+		/>
 
 		<SelectField
 			label="Stanowisko"

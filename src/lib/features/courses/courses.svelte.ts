@@ -58,9 +58,7 @@ export class CoursesState {
 			const loadSummaries = loadsResponse.content ?? [];
 
 			const loadDetails = await Promise.all(
-				loadSummaries
-					.filter((load) => load.id !== undefined)
-					.map((load) => getLoad(load.id!))
+				loadSummaries.filter((load) => load.id !== undefined).map((load) => getLoad(load.id!))
 			);
 
 			this.employees = employeesResponse.content ?? [];
@@ -137,33 +135,31 @@ export class CoursesState {
 	}
 
 	async startView(course: CourseSummaryDTO) {
-	if (!course.id) return;
+		if (!course.id) return;
 
-	this.error = null;
-	this.formError = null;
-	this.showForm = false;
-	this.editedCourse = null;
+		this.error = null;
+		this.formError = null;
+		this.showForm = false;
+		this.editedCourse = null;
 
-	try {
-		this.viewedCourse = await getCourse(course.id);
-		this.showDetails = true;
-	} catch (error) {
-		console.error(error);
-		this.error = 'Nie udało się pobrać szczegółów kursu.';
+		try {
+			this.viewedCourse = await getCourse(course.id);
+			this.showDetails = true;
+		} catch (error) {
+			console.error(error);
+			this.error = 'Nie udało się pobrać szczegółów kursu.';
+		}
 	}
-}
 
-closeDetails() {
-	this.showDetails = false;
-	this.viewedCourse = null;
-}
+	closeDetails() {
+		this.showDetails = false;
+		this.viewedCourse = null;
+	}
 
 	async removeCourse(course: CourseSummaryDTO) {
 		if (!course.id) return;
 
-		const confirmed = confirm(
-			`Czy na pewno usunąć kurs ${course.destination || `#${course.id}`}?`
-		);
+		const confirmed = confirm(`Czy na pewno usunąć kurs ${course.destination || `#${course.id}`}?`);
 
 		if (!confirmed) return;
 

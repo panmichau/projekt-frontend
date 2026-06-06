@@ -1,16 +1,6 @@
-import {
-	createClient,
-	deleteClient,
-	getClient,
-	getClients,
-	updateClient
-} from '$lib/api/clients';
+import { createClient, deleteClient, getClient, getClients, updateClient } from '$lib/api/clients';
 
-import type {
-	ClientDTO,
-	ClientSummaryDTO,
-	PageMetadata
-} from '$lib/api/types';
+import type { ClientDTO, ClientSummaryDTO, PageMetadata } from '$lib/api/types';
 
 import { buildClientRequest } from '$lib/features/clients/client-request';
 import type { ClientFormValue } from '$lib/features/clients/client-form.types';
@@ -93,8 +83,6 @@ export class ClientsState {
 		this.formError = null;
 	}
 
-	
-
 	async saveClient(value: ClientFormValue) {
 		this.saving = true;
 		this.formError = null;
@@ -122,9 +110,7 @@ export class ClientsState {
 	async removeClient(client: ClientSummaryDTO) {
 		if (!client.id) return;
 
-		const confirmed = confirm(
-			`Czy na pewno usunąć klienta ${client.name || `#${client.id}`}?`
-		);
+		const confirmed = confirm(`Czy na pewno usunąć klienta ${client.name || `#${client.id}`}?`);
 
 		if (!confirmed) return;
 

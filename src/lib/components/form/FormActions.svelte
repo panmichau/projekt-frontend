@@ -6,12 +6,7 @@
 		onCancel: () => void;
 	};
 
-	let {
-		submitLabel,
-		savingLabel = 'Zapisywanie...',
-		saving = false,
-		onCancel
-	}: Props = $props();
+	let { submitLabel, savingLabel = 'Zapisywanie...', saving = false, onCancel }: Props = $props();
 </script>
 
 <div class="flex gap-3">

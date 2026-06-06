@@ -84,13 +84,7 @@
 				required
 			/>
 
-			<InputField
-				label="NIP"
-				bind:value={$form.nip}
-				error={$errors.nip}
-				maxlength={10}
-				required
-			/>
+			<InputField label="NIP" bind:value={$form.nip} error={$errors.nip} maxlength={10} required />
 
 			<InputField
 				label="Telefon"

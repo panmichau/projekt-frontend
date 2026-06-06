@@ -59,7 +59,7 @@
 			.min(0)
 			.required(),
 		driver: yup.string(),
-		version: yup.string().required(),
+		version: yup.string().required()
 	});
 
 	const { form, errors, handleSubmit } = createForm({
@@ -71,10 +71,7 @@
 			driver: untrack(() => (course?.driver?.id ? String(course.driver.id) : '')),
 			version: untrack(() => (course?.version != null ? String(course.version) : '1')),
 			loadIds: untrack(
-				() =>
-					course?.loads
-						?.map((load) => load.id)
-						.filter((id): id is number => Boolean(id)) ?? []
+				() => course?.loads?.map((load) => load.id).filter((id): id is number => Boolean(id)) ?? []
 			)
 		},
 		validationSchema,
@@ -148,13 +145,7 @@
 			required
 		/>
 
-		<InputField
-			label="Koszt"
-			type="number"
-			bind:value={$form.cost}
-			error={$errors.cost}
-			required
-		/>
+		<InputField label="Koszt" type="number" bind:value={$form.cost} error={$errors.cost} required />
 
 		<SelectField
 			label="Kierowca"
@@ -169,7 +160,7 @@
 		</div>
 
 		<CourseLoadsField
-			loads={loads}
+			{loads}
 			selectedLoadIds={$form.loadIds}
 			currentCourseId={course?.id ?? null}
 			onToggle={toggleLoad}
@@ -182,7 +173,7 @@
 				submitLabel={isEdit ? 'Zapisz zmiany' : 'Dodaj kurs'}
 				savingLabel="Zapisywanie..."
 				{saving}
-				onCancel={onCancel}
+				{onCancel}
 			/>
 		</div>
 	</form>

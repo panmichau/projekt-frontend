@@ -3,7 +3,7 @@
 	import DetailsSection from '$lib/components/ui/DetailsSection.svelte';
 	import DetailItem from '$lib/components/ui/DetailItem.svelte';
 
-	let { contract, onClose }: { contract: ContractDTO; onClose: () => void; } = $props();
+	let { contract, onClose }: { contract: ContractDTO; onClose: () => void } = $props();
 </script>
 
 <DetailsSection
@@ -13,7 +13,7 @@
 >
 	<DetailItem label="ID Kontraktu" value={contract.id} />
 	<DetailItem label="Nazwa" value={contract.name} />
-	
+
 	<DetailItem label="Klient">
 		{contract.client ? `${contract.client.name} (NIP: ${contract.client.nip})` : 'Brak przypisania'}
 	</DetailItem>

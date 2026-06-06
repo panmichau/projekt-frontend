@@ -126,7 +126,7 @@ export class ContractsState {
 		this.showDetails = false;
 		this.viewedContract = null;
 	}
-	
+
 	async saveContract(value: ContractFormValue) {
 		this.saving = true;
 		this.formError = null;
@@ -176,13 +176,12 @@ export class ContractsState {
 		}
 	}
 	async search() {
-	await this.loadContracts(0);
-}
+		await this.loadContracts(0);
+	}
 
 	async clearFilters() {
-	this.clientName = '';
+		this.clientName = '';
 
-	await this.loadContracts(0);
-}
-
+		await this.loadContracts(0);
+	}
 }

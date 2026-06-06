@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	let { 
-		title, 
-		description, 
-		onClose, 
-		children 
+	let {
+		title,
+		description,
+		onClose,
+		children
 	}: {
 		title: string;
 		description?: string;
@@ -29,11 +29,16 @@
 			title="Zamknij detale"
 		>
 			<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M6 18L18 6M6 6l12 12"
+				/>
 			</svg>
 		</button>
 	</div>
-	
+
 	<dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 		{@render children()}
 	</dl>

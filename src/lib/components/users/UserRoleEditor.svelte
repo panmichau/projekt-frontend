@@ -26,13 +26,10 @@
 		onCancel
 	}: Props = $props();
 
-	const availableRoles: Role[] = ['DRIVER', 'FORWARDER', 'MANAGER',];
+	const availableRoles: Role[] = ['DRIVER', 'FORWARDER', 'MANAGER'];
 </script>
 
-<FormSection
-	title="Edycja ról użytkownika"
-	description={user.email ?? ''}
->
+<FormSection title="Edycja ról użytkownika" description={user.email ?? ''}>
 	<div class="flex flex-wrap gap-3">
 		{#each availableRoles as role (role)}
 			<label
@@ -58,11 +55,6 @@
 			onSave();
 		}}
 	>
-		<FormActions
-			submitLabel="Zapisz role"
-			savingLabel="Zapisywanie..."
-			{saving}
-			{onCancel}
-		/>
+		<FormActions submitLabel="Zapisz role" savingLabel="Zapisywanie..." {saving} {onCancel} />
 	</form>
 </FormSection>

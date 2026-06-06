@@ -11,9 +11,9 @@
 	import FormActions from '$lib/components/form/FormActions.svelte';
 	import InputField from '../ui/InputField.svelte';
 	import SelectField from '$lib/components/form/SelectField.svelte';
-    import AsyncSelectField from '$lib/components/form/AsyncSelectField.svelte';
+	import AsyncSelectField from '$lib/components/form/AsyncSelectField.svelte';
 
-    import { getContracts } from '$lib/api/contracts';
+	import { getContracts } from '$lib/api/contracts';
 
 	type Props = {
 		load: LoadDTO | null;
@@ -45,10 +45,10 @@
 			identifier: untrack(() => load?.identifier ?? ''),
 			type: untrack(() => load?.type ?? ''),
 			size: untrack(() => load?.size ?? ''),
-			weight: untrack(() => load?.weight ? String(load.weight) : ''),
-			worth: untrack(() => load?.worth !== undefined ? String(load.worth) : ''),
-			contractId: untrack(() => load?.contract?.id ? String(load.contract.id) : ''),
-			deliveryStateId: untrack(() => load?.deliveryState ??  '')
+			weight: untrack(() => (load?.weight ? String(load.weight) : '')),
+			worth: untrack(() => (load?.worth !== undefined ? String(load.worth) : '')),
+			contractId: untrack(() => (load?.contract?.id ? String(load.contract.id) : '')),
+			deliveryStateId: untrack(() => load?.deliveryState ?? '')
 		},
 		validationSchema: schema,
 		onSubmit: (values) => onSubmit(values as LoadFormValue)
@@ -73,17 +73,17 @@
 		{ value: 'CANCELLED', label: 'Anulowano' }
 	];
 
-    async function searchContracts(search: string) {
+	async function searchContracts(search: string) {
 		if (!search) return [];
 		try {
 			const response = await getContracts(0, 10, search);
-			
+
 			return (response.content ?? []).map((c: ContractSummaryDTO) => ({
 				value: String(c.id),
 				label: `${c.name ?? `Kontrakt #${c.id}`} (Klient: ${c.clientName ?? '-'})`
 			}));
 		} catch (e) {
-			console.error("Błąd ładowania kontraktów", e);
+			console.error('Błąd ładowania kontraktów', e);
 			return [];
 		}
 	}
@@ -97,21 +97,46 @@
 
 <FormSection
 	title={load?.id ? 'Edycja ładunku' : 'Nowy ładunek'}
-	description={load?.id ? 'Edytujesz parametry istniejącego ładunku.' : 'Dodaj nowy ładunek do systemu.'}
+	description={load?.id
+		? 'Edytujesz parametry istniejącego ładunku.'
+		: 'Dodaj nowy ładunek do systemu.'}
 >
 	<FormError {error} />
 
 	<form class="space-y-4" onsubmit={handleSubmit} novalidate>
 		<div class="grid gap-4 md:grid-cols-2">
-			<InputField label="Identyfikator" bind:value={$form.identifier} error={$errors.identifier} required />
+			<InputField
+				label="Identyfikator"
+				bind:value={$form.identifier}
+				error={$errors.identifier}
+				required
+			/>
 			<InputField label="Typ" bind:value={$form.type} error={$errors.type} required />
-			
-			<SelectField label="Rozmiar" bind:value={$form.size} error={$errors.size} options={sizeOptions} required />
-			
-			<InputField label="Waga (kg)" type="number" bind:value={$form.weight} error={$errors.weight} required />
-			<InputField label="Wartość" type="number" bind:value={$form.worth} error={$errors.worth} required />
-			
-            <AsyncSelectField
+
+			<SelectField
+				label="Rozmiar"
+				bind:value={$form.size}
+				error={$errors.size}
+				options={sizeOptions}
+				required
+			/>
+
+			<InputField
+				label="Waga (kg)"
+				type="number"
+				bind:value={$form.weight}
+				error={$errors.weight}
+				required
+			/>
+			<InputField
+				label="Wartość"
+				type="number"
+				bind:value={$form.worth}
+				error={$errors.worth}
+				required
+			/>
+
+			<AsyncSelectField
 				label="Kontrakt powiązany"
 				bind:value={$form.contractId}
 				error={$errors.contractId}
@@ -120,9 +145,15 @@
 				placeholder="Wpisz nazwę klienta, by wyszukać..."
 				required
 			/>
-			<SelectField label="Stan dostawy" bind:value={$form.deliveryStateId} error={$errors.deliveryStateId} options={stateOptions} required />
+			<SelectField
+				label="Stan dostawy"
+				bind:value={$form.deliveryStateId}
+				error={$errors.deliveryStateId}
+				options={stateOptions}
+				required
+			/>
 		</div>
 
-		<FormActions submitLabel="Zapisz" {saving} onCancel={onCancel} />
+		<FormActions submitLabel="Zapisz" {saving} {onCancel} />
 	</form>
 </FormSection>

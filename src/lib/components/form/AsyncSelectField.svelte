@@ -75,14 +75,18 @@
 		class="h-10 border border-zinc-300 bg-white px-3 text-sm outline-none focus:border-black"
 		bind:value={searchTerm}
 		oninput={handleInput}
-		onfocus={() => { if (searchTerm || options.length > 0) isOpen = true; }}
+		onfocus={() => {
+			if (searchTerm || options.length > 0) isOpen = true;
+		}}
 		onblur={handleBlur}
 		{placeholder}
 		{required}
 	/>
 
 	{#if isOpen}
-		<ul class="absolute left-0 top-full z-10 max-h-60 w-full overflow-y-auto border border-zinc-300 bg-white shadow-lg">
+		<ul
+			class="absolute top-full left-0 z-10 max-h-60 w-full overflow-y-auto border border-zinc-300 bg-white shadow-lg"
+		>
 			{#if isLoading}
 				<li class="p-3 text-sm text-zinc-500">Szukanie...</li>
 			{:else if options.length === 0 && searchTerm.length > 0}

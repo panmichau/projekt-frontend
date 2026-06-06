@@ -1,10 +1,6 @@
 import { apiFetch } from './api';
 
-import type {
-	EmployeeDTO,
-	EmployeeSaveRequest,
-	PagedModelEmployeeSummaryDTO
-} from './types';
+import type { EmployeeDTO, EmployeeSaveRequest, PagedModelEmployeeSummaryDTO } from './types';
 
 export async function getEmployees(page = 0, size = 10) {
 	return apiFetch<PagedModelEmployeeSummaryDTO>('/employee/list', {

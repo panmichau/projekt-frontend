@@ -1,10 +1,6 @@
 import { apiFetch } from './api';
 
-import type {
-	ClientDTO,
-	ClientSaveRequest,
-	PagedModelClientSummaryDTO
-} from './types';
+import type { ClientDTO, ClientSaveRequest, PagedModelClientSummaryDTO } from './types';
 
 export async function getClients(page = 0, size = 10) {
 	return apiFetch<PagedModelClientSummaryDTO>('/client/list', {

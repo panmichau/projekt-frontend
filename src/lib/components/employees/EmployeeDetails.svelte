@@ -3,7 +3,7 @@
 	import DetailsSection from '$lib/components/ui/DetailsSection.svelte';
 	import DetailItem from '$lib/components/ui/DetailItem.svelte';
 
-	let { employee, onClose }: { employee: EmployeeDTO; onClose: () => void; } = $props();
+	let { employee, onClose }: { employee: EmployeeDTO; onClose: () => void } = $props();
 </script>
 
 <DetailsSection
@@ -15,7 +15,7 @@
 	<DetailItem label="Imię" value={employee.firstName} />
 	<DetailItem label="Nazwisko" value={employee.lastName} />
 	<DetailItem label="Telefon" value={employee.phoneNumber} />
-	
+
 	<DetailItem label="Stanowisko">
 		{employee.position?.position ?? '-'}
 	</DetailItem>

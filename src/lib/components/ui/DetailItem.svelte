@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	let { 
-		label, 
-		value, 
-		children 
-	}: { 
-		label: string; 
-		value?: string | number | null; 
-		children?: Snippet; 
+	let {
+		label,
+		value,
+		children
+	}: {
+		label: string;
+		value?: string | number | null;
+		children?: Snippet;
 	} = $props();
 </script>
 

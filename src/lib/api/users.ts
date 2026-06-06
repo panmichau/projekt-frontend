@@ -19,7 +19,6 @@ export async function getUnassignedUsers() {
 	});
 }
 
-
 export async function getUser(userId: number) {
 	return apiFetch<UserSummaryDTO>('/user', {
 		method: 'GET',

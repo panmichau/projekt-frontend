@@ -67,7 +67,7 @@ export class LoadsState {
 		if (!load.id) return;
 		this.error = null;
 		this.showForm = false;
-		
+
 		try {
 			this.viewedLoad = await getLoad(load.id);
 			this.showDetails = true;
@@ -107,7 +107,9 @@ export class LoadsState {
 
 	async removeLoad(load: LoadSummaryDTO) {
 		if (!load.id) return;
-		const confirmed = confirm(`Czy na pewno chcesz usunąć ładunek ${load.identifier || `#${load.id}`}?`);
+		const confirmed = confirm(
+			`Czy na pewno chcesz usunąć ładunek ${load.identifier || `#${load.id}`}?`
+		);
 		if (!confirmed) return;
 
 		this.deleting = true;
@@ -119,7 +121,6 @@ export class LoadsState {
 			if (this.viewedLoad?.id === load.id) {
 				this.closeDetails();
 			}
-			
 		} catch {
 			this.error = 'Nie udało się usunąć ładunku.';
 		} finally {

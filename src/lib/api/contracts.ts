@@ -1,10 +1,6 @@
 import { apiFetch } from './api';
 
-import type {
-	ContractDTO,
-	ContractSaveRequest,
-	PagedModelContractSummaryDTO
-} from './types';
+import type { ContractDTO, ContractSaveRequest, PagedModelContractSummaryDTO } from './types';
 
 export async function getContracts(page = 0, size = 10, clientName = '') {
 	return apiFetch<PagedModelContractSummaryDTO>('/contract/list', {
@@ -13,7 +9,7 @@ export async function getContracts(page = 0, size = 10, clientName = '') {
 		query: {
 			page,
 			size,
-			clientName: clientName || undefined,
+			clientName: clientName || undefined
 		}
 	});
 }

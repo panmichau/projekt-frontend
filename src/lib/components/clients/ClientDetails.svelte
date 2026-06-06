@@ -3,7 +3,7 @@
 	import DetailsSection from '$lib/components/ui/DetailsSection.svelte';
 	import DetailItem from '$lib/components/ui/DetailItem.svelte';
 
-	let { client, onClose }: { client: ClientDTO; onClose: () => void; } = $props();
+	let { client, onClose }: { client: ClientDTO; onClose: () => void } = $props();
 </script>
 
 <DetailsSection
@@ -16,7 +16,7 @@
 	<DetailItem label="NIP" value={client.nip} />
 	<DetailItem label="Telefon" value={client.phoneNumber} />
 	<DetailItem label="Email" value={client.email} />
-	
+
 	<DetailItem label="Liczba kontraktów">
 		{client.contracts?.length ?? 0}
 	</DetailItem>

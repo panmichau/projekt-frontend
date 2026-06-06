@@ -1,5 +1,10 @@
 import { apiFetch } from './api';
-import type { LoadDTO, LoadSaveRequest, LoadUpdateRequest, PagedModelLoadSummaryDTO } from './types';
+import type {
+	LoadDTO,
+	LoadSaveRequest,
+	LoadUpdateRequest,
+	PagedModelLoadSummaryDTO
+} from './types';
 
 export async function getLoads(page = 0, size = 10) {
 	return apiFetch<PagedModelLoadSummaryDTO>('/load/list', {
@@ -26,12 +31,12 @@ export async function createLoad(data: LoadSaveRequest) {
 }
 
 export async function updateLoad(loadId: number, data: LoadUpdateRequest | LoadSaveRequest) {
-    return apiFetch<LoadDTO>('/load', {
-        method: 'PUT',
-        auth: true,
-        query: { loadId },
-        body: data
-    });
+	return apiFetch<LoadDTO>('/load', {
+		method: 'PUT',
+		auth: true,
+		query: { loadId },
+		body: data
+	});
 }
 
 export async function deleteLoad(loadId: number) {

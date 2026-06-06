@@ -10,11 +10,7 @@ export function buildContractRequest(value: ContractFormValue): ContractSaveRequ
 	return {
 		name: value.name.trim(),
 		clientId: Number(value.clientId),
-		senderAddress: buildAddress(
-			value.senderStreet,
-			value.senderPostalCode,
-			value.senderCity
-		),
+		senderAddress: buildAddress(value.senderStreet, value.senderPostalCode, value.senderCity),
 		deliveryAddress: buildAddress(
 			value.deliveryStreet,
 			value.deliveryPostalCode,
