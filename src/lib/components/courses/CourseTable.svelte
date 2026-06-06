@@ -11,7 +11,7 @@
 		onView: (course: CourseSummaryDTO) => void;
 		onEdit: (course: CourseSummaryDTO) => void;
 		onDelete: (course: CourseSummaryDTO) => void;
-		editRoles: string[];
+		editRoles?: string[];
 	};
 
 	let { courses, onView, onEdit, onDelete, editRoles }: Props = $props();

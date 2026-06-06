@@ -13,11 +13,10 @@
 
 	const state = new LoadsState();
 
+	const editRoles = ['FORWARDER', 'MANAGER', 'ADMIN'];
+
 	onMount(async () => {
-		await Promise.all([
-			state.loadLoads(),
-			state.loadFormData()
-		]);
+		await Promise.all([state.loadLoads(), state.loadFormData()]);
 	});
 </script>
 
@@ -55,10 +54,7 @@
 	{/if}
 
 	{#if state.showDetails && state.viewedLoad}
-		<LoadDetails 
-			load={state.viewedLoad} 
-			onClose={() => state.closeDetails()} 
-		/>
+		<LoadDetails load={state.viewedLoad} onClose={() => state.closeDetails()} />
 	{/if}
 
 	{#if state.loading || state.deleting}
@@ -70,14 +66,17 @@
 	{:else if state.error}
 		<ErrorMessage message={state.error} retry={() => state.loadLoads()} />
 	{:else if state.loads.length === 0}
-		<EmptyState title="Brak ładunków" 
-        description="W bazie danych nie znaleziono żadnych ładunków. Kliknij przycisk powyżej, aby dodać pierwszy."/>
+		<EmptyState
+			title="Brak ładunków"
+			description="W bazie danych nie znaleziono żadnych ładunków. Kliknij przycisk powyżej, aby dodać pierwszy."
+		/>
 	{:else}
 		<LoadTable
 			loads={state.loads}
 			onView={(load) => state.startView(load)}
 			onEdit={(load) => state.startEdit(load)}
 			onDelete={(load) => state.removeLoad(load)}
+			{editRoles}
 		/>
 
 		{#if state.page}

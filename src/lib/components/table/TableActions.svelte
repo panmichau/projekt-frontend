@@ -7,7 +7,7 @@
 		onEdit?: (item: unknown) => void;
 		onDelete?: (item: unknown) => void;
 		onView?: (item: unknown) => void;
-		editRoles: string[];
+		editRoles?: string[];
 	};
 
 	let { item, canDelete = true, onEdit, onDelete, onView, editRoles = ['ADMIN'] }: Props = $props();
