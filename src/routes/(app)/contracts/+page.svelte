@@ -10,10 +10,12 @@
 
 	import ContractForm from '$lib/components/contracts/ContractForm.svelte';
 	import ContractTable from '$lib/components/contracts/ContractTable.svelte';
-    import ContractFilters from '$lib/components/contracts/ContractFilters.svelte';
+	import ContractFilters from '$lib/components/contracts/ContractFilters.svelte';
 	import ContractDetails from '$lib/components/contracts/ContractDetails.svelte';
 
 	const state = new ContractsState();
+
+	const editRoles = ['FORWARDER', 'MANAGER', 'ADMIN'];
 
 	onMount(async () => {
 		await state.loadContracts();
@@ -37,11 +39,11 @@
 		</button>
 	</div>
 
-   <ContractFilters
-	bind:clientName={state.clientName}
-	onSearch={() => state.search()}
-	onClear={() => state.clearFilters()}
-/>
+	<ContractFilters
+		bind:clientName={state.clientName}
+		onSearch={() => state.search()}
+		onClear={() => state.clearFilters()}
+	/>
 
 	<p class="mb-4 text-sm text-zinc-600">
 		Liczba kontraktów: {state.contracts.length}
@@ -61,11 +63,8 @@
 	{/if}
 
 	{#if state.showDetails && state.viewedContract}
-        <ContractDetails 
-            contract={state.viewedContract} 
-            onClose={() => state.closeDetails()} 
-        />
-    {/if}
+		<ContractDetails contract={state.viewedContract} onClose={() => state.closeDetails()} />
+	{/if}
 
 	{#if state.loading || state.deleting}
 		<div class="border border-zinc-300 bg-white p-5">
@@ -89,6 +88,7 @@
 			onEdit={(contract) => void state.startEdit(contract)}
 			onDelete={(contract) => void state.removeContract(contract)}
 			onView={(contract) => state.startView(contract)}
+			{editRoles}
 		/>
 
 		{#if state.page}

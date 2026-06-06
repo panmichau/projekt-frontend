@@ -4,16 +4,16 @@
 	import TableHeaderCell from '$lib/components/table/TableHeaderCell.svelte';
 	import TableCell from '$lib/components/table/TableCell.svelte';
 	import TableActions from '$lib/components/table/TableActions.svelte';
-	
 
 	type Props = {
 		contracts: ContractSummaryDTO[];
 		onEdit: (contract: ContractSummaryDTO) => void;
 		onDelete: (contract: ContractSummaryDTO) => void;
 		onView?: (contract: ContractSummaryDTO) => void;
+		editRoles?: string[];
 	};
 
-	let { contracts, onEdit, onDelete, onView }: Props = $props();
+	let { contracts, onEdit, onDelete, onView, editRoles }: Props = $props();
 </script>
 
 <TableWrapper>
@@ -48,6 +48,7 @@
 						onEdit={() => onEdit(contract)}
 						onDelete={() => onDelete(contract)}
 						onView={() => onView?.(contract)}
+						{editRoles}
 					/>
 				</TableCell>
 			</tr>
