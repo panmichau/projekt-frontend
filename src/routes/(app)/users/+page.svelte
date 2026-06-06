@@ -17,6 +17,8 @@
 
 	type Role = 'NONE' | 'DRIVER' | 'FORWARDER' | 'MANAGER' | 'ADMIN';
 
+	const editRoles = ['MANAGER', 'ADMIN'];
+
 	let users = $state<UserSummaryDTO[]>([]);
 	let page = $state<PageMetadata | null>(null);
 	let loading = $state(false);
@@ -136,7 +138,7 @@
 			description="W systemie nie ma jeszcze żadnych kont użytkowników."
 		/>
 	{:else}
-		<UserTable {users} onEditRoles={startEdit} />
+		<UserTable {users} onEditRoles={startEdit} {editRoles} />
 
 		{#if page}
 			<Pagination {page} onPageChange={loadUsers} />

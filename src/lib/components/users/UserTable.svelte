@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { UserSummaryDTO } from '$lib/api/types';
+	import { auth } from '$lib/auth/auth.svelte';
 	import TableCell from '$lib/components/table/TableCell.svelte';
 	import TableHeaderCell from '$lib/components/table/TableHeaderCell.svelte';
 	import TableWrapper from '$lib/components/table/TableWrapper.svelte';
@@ -7,9 +8,10 @@
 	type Props = {
 		users: UserSummaryDTO[];
 		onEditRoles: (user: UserSummaryDTO) => void;
+		editRoles?: string[];
 	};
 
-	let { users, onEditRoles }: Props = $props();
+	let { users, onEditRoles, editRoles = ['ADMIN'] }: Props = $props();
 </script>
 
 <TableWrapper>
@@ -50,13 +52,15 @@
 				</TableCell>
 
 				<TableCell align="right">
-					<button
-						type="button"
-						class="inline-flex h-9 items-center justify-center border border-zinc-300 bg-white px-3 text-sm font-medium text-black hover:bg-zinc-100"
-						onclick={() => onEditRoles(user)}
-					>
-						Edytuj role
-					</button>
+					{#if auth.hasAnyRole(editRoles)}
+						<button
+							type="button"
+							class="inline-flex h-9 items-center justify-center border border-zinc-300 bg-white px-3 text-sm font-medium text-black hover:bg-zinc-100"
+							onclick={() => onEditRoles(user)}
+						>
+							Edytuj role
+						</button>
+					{/if}
 				</TableCell>
 			</tr>
 		{:else}
