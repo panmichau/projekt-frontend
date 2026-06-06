@@ -10,7 +10,7 @@
 		editRoles: string[];
 	};
 
-	let { item, canDelete = true, onEdit, onDelete, onView, editRoles }: Props = $props();
+	let { item, canDelete = true, onEdit, onDelete, onView, editRoles = ['ADMIN'] }: Props = $props();
 </script>
 
 <div class="flex justify-end gap-3">
