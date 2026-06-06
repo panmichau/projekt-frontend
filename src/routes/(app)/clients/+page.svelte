@@ -11,8 +11,10 @@
 	import ClientForm from '$lib/components/clients/ClientForm.svelte';
 	import ClientTable from '$lib/components/clients/ClientTable.svelte';
 	import ClientDetails from '$lib/components/clients/ClientDetails.svelte';
+	import { auth } from '$lib/auth/auth.svelte';
 
 	const state = new ClientsState();
+	const editRoles = ['FORWARDER', 'MANAGER', 'ADMIN'];
 
 	onMount(async () => {
 		await state.loadClients();
@@ -27,13 +29,15 @@
 	<div class="mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 		<PageHeader title="Klienci" description="Lista klientów i dane kontaktowe." />
 
-		<button
-			type="button"
-			class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
-			onclick={() => state.startCreate()}
-		>
-			Dodaj klienta
-		</button>
+		{#if auth.hasAnyRole(editRoles)}
+			<button
+				type="button"
+				class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
+				onclick={() => state.startCreate()}
+			>
+				Dodaj klienta
+			</button>
+		{/if}
 	</div>
 
 	<p class="mb-4 text-sm text-zinc-600">
@@ -53,10 +57,7 @@
 	{/if}
 
 	{#if state.showDetails && state.viewedClient}
-		<ClientDetails 
-			client={state.viewedClient} 
-			onClose={() => state.closeDetails()} 
-		/>
+		<ClientDetails client={state.viewedClient} onClose={() => state.closeDetails()} />
 	{/if}
 
 	{#if state.loading || state.deleting}
@@ -68,16 +69,14 @@
 	{:else if state.error}
 		<ErrorMessage message={state.error} retry={() => state.loadClients(state.page?.number ?? 0)} />
 	{:else if state.clients.length === 0}
-		<EmptyState
-			title="Brak klientów"
-			description="W systemie nie ma jeszcze żadnych klientów."
-		/>
+		<EmptyState title="Brak klientów" description="W systemie nie ma jeszcze żadnych klientów." />
 	{:else}
 		<ClientTable
 			clients={state.clients}
 			onView={(client) => state.startView(client)}
 			onEdit={(client) => state.startEdit(client)}
 			onDelete={(client) => state.removeClient(client)}
+			{editRoles}
 		/>
 
 		{#if state.page}

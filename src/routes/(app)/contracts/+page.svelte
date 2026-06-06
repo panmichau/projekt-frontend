@@ -12,6 +12,7 @@
 	import ContractTable from '$lib/components/contracts/ContractTable.svelte';
 	import ContractFilters from '$lib/components/contracts/ContractFilters.svelte';
 	import ContractDetails from '$lib/components/contracts/ContractDetails.svelte';
+	import { auth } from '$lib/auth/auth.svelte';
 
 	const state = new ContractsState();
 
@@ -30,13 +31,15 @@
 	<div class="mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 		<PageHeader title="Kontrakty" description="Lista kontraktów klientów." />
 
-		<button
-			type="button"
-			class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
-			onclick={() => void state.startCreate()}
-		>
-			Dodaj kontrakt
-		</button>
+		{#if auth.hasAnyRole(editRoles)}
+			<button
+				type="button"
+				class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
+				onclick={() => void state.startCreate()}
+			>
+				Dodaj kontrakt
+			</button>
+		{/if}
 	</div>
 
 	<ContractFilters

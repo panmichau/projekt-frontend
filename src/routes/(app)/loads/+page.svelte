@@ -10,6 +10,7 @@
 	import LoadForm from '$lib/components/loads/LoadForm.svelte';
 	import LoadTable from '$lib/components/loads/LoadTable.svelte';
 	import LoadDetails from '$lib/components/loads/LoadDetails.svelte';
+	import { auth } from '$lib/auth/auth.svelte';
 
 	const state = new LoadsState();
 
@@ -28,13 +29,15 @@
 	<div class="mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 		<PageHeader title="Ładunki" description="Ewidencja i zarządzanie ładunkami." />
 
-		<button
-			type="button"
-			class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
-			onclick={() => state.startCreate()}
-		>
-			Dodaj ładunek
-		</button>
+		{#if auth.hasAnyRole(editRoles)}
+			<button
+				type="button"
+				class="inline-flex h-10 items-center justify-center border border-black bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"
+				onclick={() => state.startCreate()}
+			>
+				Dodaj ładunek
+			</button>
+		{/if}
 	</div>
 
 	<p class="mb-4 text-sm text-zinc-600">
