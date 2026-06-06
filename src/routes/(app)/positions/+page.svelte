@@ -11,11 +11,14 @@
 
 	import PositionForm from '$lib/components/positions/PositionForm.svelte';
 	import PositionTable from '$lib/components/positions/PositionTable.svelte';
+	import { auth } from '$lib/auth/auth.svelte';
 
 	let positions = $state<PositionDTO[]>([]);
 	let loading = $state(false);
 	let saving = $state(false);
 	let error = $state<string | null>(null);
+
+	const editRoles = ['MANAGER', 'ADMIN'];
 
 	async function loadPositions() {
 		loading = true;
@@ -80,7 +83,9 @@
 <div class="mx-auto w-full max-w-6xl px-4 py-8">
 	<PageHeader title="Stanowiska" description="Lista stanowisk dostępnych dla pracowników." />
 
-	<PositionForm {saving} onCreate={handleCreatePosition} />
+	{#if auth.hasAnyRole(editRoles)}
+		<PositionForm {saving} onCreate={handleCreatePosition} />
+	{/if}
 
 	{#if loading}
 		<div class="border border-zinc-300 bg-white p-5">
@@ -91,6 +96,6 @@
 	{:else if positions.length === 0}
 		<EmptyState title="Brak stanowisk" description="W systemie nie ma jeszcze żadnych stanowisk." />
 	{:else}
-		<PositionTable {positions} onDelete={handleDeletePosition} />
+		<PositionTable {positions} onDelete={handleDeletePosition} {editRoles} />
 	{/if}
 </div>

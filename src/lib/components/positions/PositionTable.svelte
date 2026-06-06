@@ -5,13 +5,13 @@
 	import TableHeaderCell from '$lib/components/table/TableHeaderCell.svelte';
 	import TableWrapper from '$lib/components/table/TableWrapper.svelte';
 
-
 	type Props = {
 		positions: PositionDTO[];
 		onDelete: (position: PositionDTO) => void;
+		editRoles?: string[];
 	};
 
-	let { positions, onDelete }: Props = $props();
+	let { positions, onDelete, editRoles }: Props = $props();
 </script>
 
 <TableWrapper>
@@ -36,9 +36,10 @@
 
 				<TableCell align="right">
 					<TableActions
-						item={item}
+						{item}
 						canDelete={item.id !== undefined && item.id !== null}
 						onDelete={() => onDelete(item)}
+						{editRoles}
 					/>
 				</TableCell>
 			</tr>
