@@ -4,10 +4,10 @@
 
 To run the project, following are needed:
 
-* Node.js
-* npm
-* a running backend application
-* a configured API URL in the environment file
+- Node.js
+- npm
+- a running backend application
+- a configured API URL in the environment file
 
 ### Installing Dependencies
 
@@ -22,7 +22,7 @@ npm install
 In the root directory of the project, create a `.env` file and set the backend API URL and Google Analitics, for example:
 
 ```
-PUBLIC_API_URL=http://localhost:8443 
+PUBLIC_API_URL=http://localhost:8443
 PUBLIC_GA_MEASUREMENT_ID=..............
 ```
 
@@ -39,7 +39,6 @@ By default, the application will be available at:
 ```text
 http://localhost:5173
 ```
-
 
 ## Technologies Used
 
@@ -62,6 +61,7 @@ Vite is used as the development server and build tool. It is responsible for run
 The project is written in TypeScript. Static typing improves code safety and makes it easier to work with data returned from the backend. API types are generated from the OpenAPI specification, which allows the frontend to use types such as `UserDTO`, `EmployeeDTO`, `CourseDTO`, `LoadDTO`, `ContractDTO`, and `ClientDTO`.
 
 ### Yup
+
 Yup is used for schema-based form validation. It helps validate form data before sending requests to the backend.
 
 ### Sentry
@@ -80,14 +80,14 @@ PUBLIC_GA_MEASUREMENT_ID=.................
 
 The frontend communicates with the backend using a REST API. The application supports endpoints related to:
 
-* authentication and user registration,
-* users,
-* employees,
-* positions,
-* clients,
-* contracts,
-* courses,
-* loads.
+- authentication and user registration,
+- users,
+- employees,
+- positions,
+- clients,
+- contracts,
+- courses,
+- loads.
 
 Example API paths include `/auth/login`, `/auth/me`, `/user/list`, `/employee/list`, `/client/list`, `/contract/list`, `/course/list`, etc.
 
@@ -107,11 +107,11 @@ Tailwind CSS is used for styling the user interface. It allows components to be 
 
 The application includes a user authentication mechanism and role-based access control. User roles determine access to selected modules and actions in the interface. The system includes the following roles:
 
-* `ADMIN`
-* `MANAGER`
-* `FORWARDER`
-* `DRIVER`
-* `NONE`
+- `ADMIN`
+- `MANAGER`
+- `FORWARDER`
+- `DRIVER`
+- `NONE`
 
 After logging in, the application fetches the current user data and uses it to control access to modules and available actions.
 
